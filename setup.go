@@ -383,9 +383,9 @@ func AddFORMS814Handlers(r *mux.Router) {
   r.HandleFunc("/complete-files-delete/", completeFilesDelete)
   r.HandleFunc("/delete-file-from-browser/", deleteFileFromBrowser)
 
-  // // Buttons
-  // r.HandleFunc("/create-button/", createButton)
-  // r.HandleFunc("/list-buttons/", listButtons)
-  // r.HandleFunc("/delete-button/{id}/", deleteButton)
+  // Buttons
+  r.HandleFunc("/create-button/", createButton)
+  r.HandleFunc("/list-buttons/", listButtons)
+  r.HandleFunc("/delete-button/{id}/", deleteButton)
 
 }
