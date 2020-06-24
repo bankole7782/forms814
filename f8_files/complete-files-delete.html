@@ -1,0 +1,45 @@
+{{define "title"}}Complete Files Delete{{end}}
+
+
+{{define "styles"}}
+<style>
+#done-p {
+	display: none;
+}
+</style>
+{{end}}
+
+
+{{define "main"}}
+<h3>Complete Files Delete </h3>
+<p id="wait-p">Please don't quit the page yet</p>
+<p id="done-p">Done. You can now close this page.</p>
+{{end}}
+
+
+{{define "scripts"}}
+<script>
+	var fps = [
+		{{range .FilePaths}} '{{.}}', {{end}}
+	]
+
+	var doneMsgs = [];
+	$(document).ready(function() {
+		$.ajaxSetup({async: false});
+
+		for (i = 0; i < fps.length; i++) {
+			$.get(location.origin + "/delete-file-from-browser/?p=" + fps[i], function(data) {
+			});
+
+		}
+		$("#done-p").show();
+		$("#wait-p").hide();
+
+		var params = new URLSearchParams(location.search)
+		if (params.get("n") == "l") {
+			location.href = location.origin + "/list-document-structures/";
+		}
+
+	});
+</script>
+{{end}}

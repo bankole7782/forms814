@@ -1,0 +1,10 @@
+{{define "title"}}User Details {{end}}
+
+{{define "main"}}
+  <h3>User Details for User with ID {{.UserId}}</h3>
+  <p>Fullname : <b>{{.FullName}}</b></p>
+  <h4>Roles</h4>
+  {{range .UserRoles}}
+    <span>{{.}}</span><br>
+  {{end}}
+{{end}}

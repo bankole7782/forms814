@@ -1,0 +1,170 @@
+{{define "title"}}Edit Permissions of Document Structure {{.DocumentStructure}} {{end}}
+
+
+{{define "styles"}}
+  <style>
+  .perms-input {
+    width: 400px;
+  }
+  input:invalid {
+    border: 1px solid red;
+  }
+  #error-box {
+    color: red;
+  }
+  </style>
+{{end}}
+
+
+{{define "main"}}
+  <h2>Edit Permissions of Document Structure {{.DocumentStructure}}</h2>
+  <p>Create roles <a href="/roles-view/">here</a>.</p>
+
+  {{ if .LenRPS }}
+    <h3>Delete Old Permissions Selection </h3>
+    <p>Help: To edit permissions on a role, delete and then add it a new</p>
+
+    <table id="delete-role-perms">
+      <thead>
+        <tr>
+          <td>Role</td>
+          <td>Permissions</td>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .RPS}}
+          <tr>
+            <td>{{.Role}}</td>
+            <td>{{.Permissions}}</td>
+            <td>
+              <a href='/delete-role-permissions/{{$.DocumentStructure}}/{{.Role}}/'>Delete</a>
+            </td>
+          </tr>
+        {{end}}
+      </tbody>
+    </table>
+  {{end}}
+
+  <h3>Add New Permissions Section</h3>
+  <span>Help:</span>
+  <ol>
+    <li>Administrator users have all the permissions for any document structure</li>
+  </ol>
+
+  <p id='error-box'></p>
+  <form method="post" action="">
+    <table id="new-role-perms">
+      <thead>
+        <tr>
+          <td>No</td>
+          <td>Role</td>
+          <td>Permissions</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+        <td>1</td>
+        <td>
+          <select name="role-1" class="role-select">
+            {{range $.Roles}}
+              <option>{{.}}</option>
+            {{end}}
+          </select>
+        </td>
+        <td>
+          <label>Read <input type="checkbox"  class="perms-checkbox" name="perms-1" value="read" /> </label>
+          <label>Create <input type="checkbox" class="perms-checkbox" name="perms-1" value="create" /> </label>
+          <label>Update <input type="checkbox" class="perms-checkbox" name="perms-1" value="update" /> </label>
+          <label>Delete <input type="checkbox" class="perms-checkbox" name="perms-1" value="delete" /> </label>
+          <br>
+          <label>
+            Read Only Documents created by this Role
+            <input type="checkbox" class="perms-checkbox" name="perms-1" value="read-only-created" />
+          </label>
+          <br>
+          <label>
+            Update Only Documents created by this Role
+            <input type="checkbox" class="perms-checkbox" name="perms-1" value="update-only-created" />
+          </label>
+          <br>
+          <label>
+            Delete Only Documents created by this Role
+            <input type="checkbox" class="perms-checkbox" name="perms-1" value="delete-only-created" />
+          </label>
+          <br>
+          <br><br>
+        </td>
+        <td><button type="button" class="delete-role" id="delete-role-1">Delete</button></td>
+      </tr>
+      </tbody>
+    </table>
+    <br>
+    <div>
+      <button type="button" id='add-role-btn'>Add Role</button>
+    </div>
+    <br>
+    <div>
+      <input type="submit" value="Add" />
+    </div>
+  </form>
+{{end}}
+
+{{define "scripts"}}
+  <script>
+  $('#error-box').hide();
+  $("#delete-role-1").hide();
+
+  function deleteRoleHandler(e) {
+    $(e.target).parents('tr').remove();
+    // reset the numbers
+    $('#new-role-perms tbody tr').each(function(i, el) {
+      var newNo = i + 1;
+      var strNewNo = newNo.toString()
+      $('td:first', el).text(strNewNo);
+      $('.role-select', el).attr('name', 'role-' + strNewNo);
+      $('.perms-input', el).attr('name', 'perms-' + strNewNo);
+      $('.delete-role', el).attr('id', "delete-role-" + strNewNo);
+    });
+  }
+
+  $('#add-role-btn').click(function(e) {
+    var currentNo = parseInt($('tr:last td:first').text());
+    var newNo = currentNo + 1;
+    var html = $('tr:last').html();
+    var re = new RegExp(currentNo.toString(), 'g');
+    html = html.replace(re, newNo.toString());
+
+    html = "<tr>" + html + "</tr>";
+    $('#new-role-perms tbody').append(html);
+
+    $('#delete-role-' + newNo.toString()).click(deleteRoleHandler);
+    $('#delete-role-' + newNo.toString()).show();
+
+    $('html, body').scrollTop($(document).height());
+  });
+
+  $('form input[type=submit]').click(function(e) {
+    e.preventDefault();
+    $('#error-box').hide();
+
+    form = document.querySelector('form')
+    if (form.checkValidity()) {
+      var RolesSelected = [];
+      for (i = 0; i < $('.role-select').length; i++) {
+        var el = $('.role-select')[i]
+
+        if ( RolesSelected.indexOf( $(el).val() ) == -1) {
+          RolesSelected.push( $(el).val() );
+        } else {
+          $('#error-box').text("Can't have two roles of the same name.");
+          $('#error-box').show();
+          return
+        }
+      }
+
+      $('form').submit();
+    }
+  });
+
+  </script>
+{{end}}

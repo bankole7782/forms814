@@ -1,0 +1,108 @@
+{{define "title"}}View Document Structure of {{.DocumentStructure}}{{end}}
+
+
+{{define "styles"}}
+  <style>
+  thead {
+    font-weight: bold;
+  }
+  td {
+    border-right: 1px solid gray;
+    padding: 5px;
+  }
+  td:last-child {
+    border-right: none;
+  }
+  .button-look {
+    text-decoration: none;
+    background-color: gray;
+    color: white;
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 3px;
+  }
+  .button-look:hover {
+    background-color: #ccc;
+  }
+  </style>
+{{end}}
+
+
+{{define "main"}}
+  <h2>View Document Structure of {{.DocumentStructure}}</h2>
+
+  <a href='/edit-document-structure/{{.DocumentStructure}}/'>Edit this Document Structure</a>
+
+  <span>ID : <b>{{.Id}}</b></span><br>
+  <span>Database Table Name: <b>{{.TableName}}</b></span><br>
+  <span>Is Child Table: <b>{{.ChildTable}}</b></span><br>
+  <span>Is Accessible to the Public: <b>{{.Public}}</b></span>
+  {{if .Public}}
+    <a href="/undo-make-public/{{.DocumentStructure}}/">Undo Make Public</a>
+  {{else}}
+    <a href="/make-public/{{.DocumentStructure}}/">Make Public</a>
+  {{end}}
+  <br>
+
+  <h3>Field Data</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <td>Id</td>
+        <td>Label</td>
+        <td>Name</td>
+        <td>Type</td>
+        <td>Required</td>
+        <td>Unique</td>
+        <td>ReadOnly / Calculated </td>
+        <td>Other Options</td>
+      </tr>
+    </thead>
+    <tbody>
+      {{$add := .Add}}
+      {{range $index, $element := .DocDatas}}
+      <tr>
+        <td>{{call $add $index 1}}</td>
+        <td>{{$element.Label}}</td>
+        <td>{{$element.Name}}</td>
+        <td>{{$element.Type}}</td>
+        <td>{{$element.Required}}</td>
+        <td>{{$element.Unique}}</td>
+        <td>{{$element.ReadOnly}}</td>
+        <td>{{$element.OtherOptions}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+
+  {{ if eq .ChildTable false }}
+    <h3>Permissions Data of Roles on Document Structure {{.DocumentStructure}}</h3>
+    <table>
+      <thead>
+        <tr>
+          <td>Role</td>
+          <td>Permissions</td>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .RPS}}
+          <tr>
+            <td>{{.Role}}</td>
+            <td>{{.Permissions}}</td>
+          </tr>
+        {{end}}
+      </tbody>
+    </table>
+    <a href="/edit-document-structure-permissions/{{.DocumentStructure}}/">Edit Permissions</a>
+
+    <h3>Approval Framework</h3>
+    {{ if $.HasApprovers }}
+      <p>Approval Steps: <b>{{.ApproversStr}}</b></p>
+      <a href="/remove-approvals-from-document-structure/{{.DocumentStructure}}/">Remove Approval Framework</a>
+    {{else}}
+      <a href="/add-approvals-to-document-structure/{{.DocumentStructure}}/">Add Approval Framework</a>
+    {{end}}
+  {{end}}
+
+{{end}}

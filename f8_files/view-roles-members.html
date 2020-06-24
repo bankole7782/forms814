@@ -1,0 +1,33 @@
+{{define "title"}}View Members of Role "{{.Role}}"{{end}}
+
+
+{{define "main"}}
+  <h3>View Members of Role "{{.Role}}"</h3>
+
+  {{ if .UsersCount }}
+    <table>
+      <thead>
+        <tr>
+          <td>UserId</td>
+          <td>Firstname</td>
+          <td>Surname</td>
+          <td>Email</td>
+          <td>Action</td>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .UserSummaries}}
+          <tr>
+            <td>{{.UserId}}</td>
+            <td>{{.Firstname}}</td>
+            <td>{{.Surname}}</td>
+            <td>{{.Email}}</td>
+            <td><a href="/remove-role-from-user-2/{{.UserId}}/{{$.Role}}/">Remove User</a></td>
+          </tr>
+        {{end}}
+    </table>
+  {{else}}
+    <p>This role has no member(s)</p>
+  {{end}}
+
+{{end}}

@@ -1,0 +1,112 @@
+{{define "title"}}Roles Management{{end}}
+
+
+{{define "styles"}}
+  <style>
+  #error-box {
+    margin-bottom: 5px;
+    display: none;
+    color: red;
+  }
+  form div {
+    margin-bottom: 5px;
+  }
+  li {
+    margin-bottom: 10px;
+  }
+  </style>
+{{end}}
+
+
+{{define "main"}}
+  <h3>Roles Management</h3>
+  {{if .NumberOfRoles}}
+  <ol>
+    {{ range .Roles }}
+      <li>
+        <a href="/view-role-members/{{.}}/">{{.}}</a>
+        <a style="margin-left: 30px" href="/delete-role/{{.}}/">Delete</a>
+      </li>
+    {{end}}
+  </ol>
+  {{ else }}
+    <p>You have not defined any roles </p>
+  {{ end }}
+
+  <h3>New Roles Form</h3>
+  <p>Enter each role on one line</p>
+
+  <form method="post" action="/new-roles/" >
+    <div>
+      <label for='id-role'>Name(s) of role</label><br>
+      <textarea id="id-roles" name="roles" required ></textarea>
+    </div>
+    <br>
+    <div>
+      <input type="submit" value="Create Role(s)" />
+    </div>
+  </form>
+
+  <h3>Renaming Roles </h3>
+  <span id='error-box'></span>
+  <form method="post" action="/rename-role/" id="rename-role-form">
+    <div>
+      <label for="id-roles-select">Role to Rename</label>&nbsp;&nbsp;
+      <select id="id-roles-select" name="role-to-rename">
+        {{range .Roles}}
+          <option>{{.}}</option>
+        {{end}}
+      </select>
+    </div>
+    <div>
+      <label for="id-new-name">New Name</label>&nbsp;&nbsp;
+      <input type="text" id="id-new-name" name="new-name" value="" />
+    </div>
+    <div>
+      <input type="submit" value="Rename Role" />
+    </div>
+  </form>
+{{end}}
+
+
+{{define "scripts"}}
+<script>
+  var rolesStr = "{{.RolesStr}}";
+
+  $(document).ready(function() {
+
+    $('#id-roles-select').change(function(e) {
+      $('#id-new-name').val( $('#id-roles-select').val() );
+    });
+
+    $('#id-roles-select').change();
+
+    $('#rename-role-form input[type=submit]').click(function(e) {
+      e.preventDefault();
+
+      $('#error-box').hide();
+
+      if ($('#id-new-name').val() == "") {
+        $('#id-new-name').css("border", "1px solid red");
+        return
+      } else {
+        $('#id-new-name').css('border', "1px solid gray");
+      }
+
+      var rolesList = rolesStr.split(",,,");
+      if ( rolesList.indexOf( $('#id-new-name').val() ) != -1) {
+        $('#error-box').text('The role name is already taken.');
+        $('#error-box').show();
+        $('#id-new-name').css("border", "1px solid red");
+        return
+      } else {
+        $('#id-new-name').css('border', "1px solid gray");
+      }
+
+      $('#rename-role-form').submit();
+    });
+
+  });
+
+</script>
+{{end}}
