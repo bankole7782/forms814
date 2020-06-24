@@ -27,11 +27,16 @@
   form div {
     margin-bottom: 10px;
   }
+  #container {
+    width: 1000px;
+    margin: 0 auto;
+  }
   </style>
 {{end}}
 
 
 {{define "main"}}
+<div id="container">
   <h1>New Document Structure</h1>
   <span id='error-box'></span>
   <form method="post" action="">
@@ -123,6 +128,7 @@
     <button id='new-field'>Add Field</button><br><br>
     <button type="submit">Create</button>
   </form>
+</div>
 {{end}}
 
 

@@ -1,33 +1,43 @@
 {{define "title"}}View Members of Role "{{.Role}}"{{end}}
 
+{{define "styles"}}
+  <style>
+    #container {
+      width: fit-content;
+      margin: 0 auto;
+    }
+  </style>
+{{end}}
 
 {{define "main"}}
-  <h3>View Members of Role "{{.Role}}"</h3>
+  <div id="container">
+    <h1>View Members of Role "{{.Role}}"</h1>
 
-  {{ if .UsersCount }}
-    <table>
-      <thead>
-        <tr>
-          <td>UserId</td>
-          <td>Firstname</td>
-          <td>Surname</td>
-          <td>Email</td>
-          <td>Action</td>
-        </tr>
-      </thead>
-      <tbody>
-        {{range .UserSummaries}}
+    {{ if .UsersCount }}
+      <table>
+        <thead>
           <tr>
-            <td>{{.UserId}}</td>
-            <td>{{.Firstname}}</td>
-            <td>{{.Surname}}</td>
-            <td>{{.Email}}</td>
-            <td><a href="/remove-role-from-user-2/{{.UserId}}/{{$.Role}}/">Remove User</a></td>
+            <td>UserId</td>
+            <td>Firstname</td>
+            <td>Surname</td>
+            <td>Email</td>
+            <td>Action</td>
           </tr>
-        {{end}}
-    </table>
-  {{else}}
-    <p>This role has no member(s)</p>
-  {{end}}
-
+        </thead>
+        <tbody>
+          {{range .UserSummaries}}
+            <tr>
+              <td>{{.UserId}}</td>
+              <td>{{.Firstname}}</td>
+              <td>{{.Surname}}</td>
+              <td>{{.Email}}</td>
+              <td><a href="/remove-role-from-user-2/{{.UserId}}/{{$.Role}}/">Remove User</a></td>
+            </tr>
+          {{end}}
+        </tbody>
+      </table>
+    {{else}}
+      <p>This role has no member(s)</p>
+    {{end}}
+  </div>
 {{end}}

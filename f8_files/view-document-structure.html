@@ -24,12 +24,17 @@
   .button-look:hover {
     background-color: #ccc;
   }
+  #container {
+    width: fit-content;
+    margin: 0 auto;
+  }
   </style>
 {{end}}
 
 
 {{define "main"}}
-  <h2>View Document Structure of {{.DocumentStructure}}</h2>
+<div id="container">
+  <h1>View Document Structure of {{.DocumentStructure}}</h1>
 
   <a href='/edit-document-structure/{{.DocumentStructure}}/'>Edit this Document Structure</a>
 
@@ -44,7 +49,7 @@
   {{end}}
   <br>
 
-  <h3>Field Data</h3>
+  <h2>Field Data</h2>
 
   <table>
     <thead>
@@ -77,7 +82,7 @@
   </table>
 
   {{ if eq .ChildTable false }}
-    <h3>Permissions Data of Roles on Document Structure {{.DocumentStructure}}</h3>
+    <h2>Permissions Data of Roles on Document Structure {{.DocumentStructure}}</h2>
     <table>
       <thead>
         <tr>
@@ -95,6 +100,7 @@
       </tbody>
     </table>
     <a href="/edit-document-structure-permissions/{{.DocumentStructure}}/">Edit Permissions</a>
-  {{end}}
 
+  {{end}}
+</div>
 {{end}}

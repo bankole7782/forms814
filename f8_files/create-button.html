@@ -1,0 +1,72 @@
+{{define "title"}}Create Button{{end}}
+
+
+
+{{define "styles"}}
+<style>
+  form div {
+    margin-bottom: 10px;
+  }
+  input[type=text] {
+    width: 300px;
+  }
+  #container {
+    width: 700px;
+    margin: 0 auto;
+  }
+  .small-shift {
+    margin-left: 20px;
+  }
+</style>
+{{end}}
+
+{{define "main"}}
+  <div id="container">
+    <h1>Create Button</h1>
+    <p>
+      Buttons would redirect to a link. The link would be of the form {url-prefix}/{document-id}/.<br>
+      url-prefix must begin and end with forward slashes eg. <pre>/ie-complain/</pre>
+    </p>
+    {{$l := len .DocumentStructureList}}
+    {{if eq $l 0 }}
+      <p>You have not created any document structure.</p>
+    {{else}}
+      <p id="error-box"></p>
+      <form id="create-button-form" method="post" action="">
+        <div>
+          <label>Button Name</label>
+          <input type="text" name="button_name" id="btn_name" required />
+        </div>
+
+        <div>
+          <label>On Document Structure</label>
+          <select name="ds">
+            {{range .DocumentStructureList}}
+              <option>{{.}}</option>
+            {{end}}
+          </select>
+        </div>
+
+        <div>
+          <label>URL prefix</label>
+          <input type="text" name="url_prefix" id="btn_url_prefix" required />
+        </div>
+
+        <h2>Roles with Execute Permission </h2>
+        {{range .Roles}}
+          <div class="small-shift">
+            <label>
+              {{.}}
+              <input type="checkbox" name="roles" value="{{.}}" />
+            </label>
+          </div>
+        {{end}}
+
+        <div>
+          <input type="submit" value="Create Button" />
+        </div>
+
+      </form>
+    {{end}}
+  </div>
+{{end}}

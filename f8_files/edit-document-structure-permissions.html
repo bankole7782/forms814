@@ -12,16 +12,21 @@
   #error-box {
     color: red;
   }
+  #container {
+    width: fit-content;
+    margin: 0 auto;
+  }
   </style>
 {{end}}
 
 
 {{define "main"}}
-  <h2>Edit Permissions of Document Structure {{.DocumentStructure}}</h2>
+<div id="container">
+  <h1>Edit Permissions of Document Structure {{.DocumentStructure}}</h1>
   <p>Create roles <a href="/roles-view/">here</a>.</p>
 
   {{ if .LenRPS }}
-    <h3>Delete Old Permissions Selection </h3>
+    <h2>Delete Old Permissions Selection </h2>
     <p>Help: To edit permissions on a role, delete and then add it a new</p>
 
     <table id="delete-role-perms">
@@ -45,7 +50,7 @@
     </table>
   {{end}}
 
-  <h3>Add New Permissions Section</h3>
+  <h2>Add New Permissions Section</h2>
   <span>Help:</span>
   <ol>
     <li>Administrator users have all the permissions for any document structure</li>

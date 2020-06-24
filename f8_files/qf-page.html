@@ -1,0 +1,77 @@
+{{define "title"}}QF Page{{end}}
+
+
+{{define "styles"}}
+<style>
+div.info {
+  border-bottom: 3px solid gray;
+  margin-bottom: 20px;
+}
+li {
+  margin-bottom: 10px;
+}
+#container {
+  width: 600px;
+  margin: 0 auto;
+}
+</style>
+{{end}}
+
+
+{{define "main"}}
+  <div id="container">
+    <h1>QF Page</h1>
+    <p>
+      This page contains all the links to the features of QF. The links here are only accessible by administrators.
+    </p>
+
+    <div class="info">
+      <h2>Users And Roles</h2>
+      <ol>
+        <li>
+          <a href="/roles-view/">Roles</a><br>
+          For the creation, listing and deletion of roles.
+        </li>
+        <li>
+          <a href="/users-to-roles-list/">Users And Roles Association</a><br>
+          A listing of the users and the roles attached to the users. It further
+          provides links to edit the association.
+        </li>
+    </div>
+
+    <div class="info">
+      <h2>Document Structures</h2>
+      <ol>
+        <li>
+          <a href="/new-document-structure/">New Document Structure</a><br>
+          A document structure is a collection of data that leads to creation of form pages.
+          This creates a new document structure.
+        </li>
+        <li>
+          <a href="/list-document-structures/">List Document Structures</a><br>
+          This list the document structures and provides links to create, view document structure,
+          view created lists and delete document structures.<br>
+          In the view page of document structures you have links to edit the document structure,
+          edit its permissions.<br>
+        </li>
+      </ol>
+    </div>
+
+    <div class="info">
+      <h2>Buttons</h2>
+      <ol>
+        <li>
+          <a href="/create-button/">Create Button</a><br>
+          This creates a new button which is shared across document structures. The button
+          would point to a link which would run the actions of the button. The administrator would write
+          the receiving link.
+        </li>
+        <li>
+          <a href="/list-buttons/">List Buttons </a><br>
+          This list the buttons created and some details about the buttons. It also contains links to delete
+          buttons.
+        </li>
+      </ol>
+    </div>
+  </div>
+{{end}}

@@ -1,0 +1,140 @@
+{{define "title"}}
+  {{if eq .ListType "true-list"}}
+    Lists of {{.DocumentStructure}} Documents
+  {{else if eq .ListType "search-list"}}
+    A search on {{.DocumentStructure}} Documents
+  {{end}}
+{{end}}
+
+
+{{define "styles"}}
+  <style>
+  thead {
+    font-weight: bold;
+  }
+  #container {
+    width: fit-content;
+    margin: 0 auto;
+  }
+  </style>
+{{end}}
+
+
+{{define "main"}}
+  <div id="container">
+    <h1>
+      {{if eq .ListType "true-list"}}
+        List of {{.DocumentStructure}} Documents
+      {{else if eq .ListType "search-list"}}
+        A search on {{.DocumentStructure}} Documents
+      {{end}}
+    </h1>
+
+    {{ if eq $.CreatePerm true}}
+      <a class="button-look" href="/create/{{.DocumentStructure}}/">Create</a>
+    {{ end}}
+
+    <a class="button-look" href="/search/{{.DocumentStructure}}/">Search</a>
+
+    {{if ne .ListType "true-list"}}
+      <a class="button-look" href="/list/{{.DocumentStructure}}/">True List</a>
+    {{end}}
+
+    Order By: <select id="order-by">
+      {{range $.OrderColumns}}
+        <option>{{.}}</option>
+      {{end}}
+      <option>Created By</option>
+      <option>Creation DateTime</option>
+      <option>Modification DateTime</option>
+    </select>
+    <select id="order-direction"><option>Ascending</option><option>Descending</option></select>
+    <button id="order-btn">Order</button>
+
+    &nbsp;&nbsp;
+    {{if and $.DeletePerm (eq $.ListType "search-list")}}
+      <button id="delete-search-results">Delete Search Results</button>
+    {{end}}
+    <br>Documents Count : <b>{{.Count}}</b>
+    <br><br>
+
+    <table>
+      <thead>
+        <tr>
+          <td>id</td>
+          {{range .ColNames}}
+            <td>{{.}}</td>
+          {{end}}
+          <td>Actions</td>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .MyRows}}
+          <tr>
+            <td>{{.Id}}</td>
+            {{range .ColAndDatas}}
+              {{if eq .ColName "Created By"}}
+                <td><a href="/user-details/{{.Data}}/">{{.Data}}</a></td>
+              {{else}}
+                <td>{{.Data }}</td>
+              {{end}}
+            {{end}}
+            <td>
+              <a class='button-look' href='/update/{{$.DocumentStructure}}/{{.Id}}/'>
+                {{ if or $.UpdatePerm .RowUpdatePerm}} View/Update {{ else }} View {{ end }}
+              </a>
+              {{ if or $.DeletePerm .RowDeletePerm }}
+                <a class='button-look' href='/delete/{{$.DocumentStructure}}/{{.Id}}/'>Delete</a>
+              {{end}}
+            </td>
+          </tr>
+        {{end}}
+      </tbody>
+    </table>
+
+    <br><br>
+    <div id="pagination">
+        Pages:
+        {{range .Pages}}
+          {{if eq $.ListType "true-list"}}
+            <a class="pagination-link" href='/list/{{$.DocumentStructure}}/{{.}}/'>{{.}}</a>
+          {{else if eq $.ListType "search-list"}}
+            <a class="pagination-link" href="/search-results/{{$.DocumentStructure}}/{{.}}/">{{.}}</a>
+          {{end}}
+        {{end}}
+    </div>
+  </div>
+{{end}}
+
+
+{{define "scripts"}}
+  <script>
+    $(document).ready(function() {
+
+      $("#order-btn").click(function(e) {
+        if (location.search == "") {
+          location.href += "?order_by=" + $('#order-by').val() + "&direction=" + $("#order-direction").val()
+        } else {
+          var params = new URLSearchParams(location.search)
+          params.set("order_by", $('#order-by').val())
+          params.set("direction", $('#order-direction').val())
+          location.href = location.origin + location.pathname + "?" + params.toString();
+        }
+      });
+
+      // complete the pagination.
+      $('.pagination-link').each(function(i, el) {
+        var href = $(el).attr('href');
+        href += location.search
+        $(el).attr("href", href);
+      });
+
+      {{if and $.DeletePerm (eq $.ListType "search-list")}}
+        $('#delete-search-results').click(function(e) {
+          location.href = "/delete-search-results/{{.DocumentStructure}}/" + location.search;
+        });
+      {{end}}
+    });
+
+  </script>
+{{end}}

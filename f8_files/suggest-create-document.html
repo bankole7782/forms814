@@ -1,0 +1,37 @@
+{{define "title"}} Suggest Create Document of {{.DocumentStructure}} {{end}}
+
+{{define "styles"}}
+  <style>
+    #container {
+      width: 700px;
+      margin: 0 auto;
+    }
+  </style>
+{{end}}
+
+{{define "main"}}
+  <div id="container">
+    <h1>Your Page is Empty</h1>
+    {{if eq .ListType "true-list"}}
+      <p>No document has been created under these Document Structure.</p>
+    {{else if eq .ListType "search-list"}}
+      <p>Your search returned no results</p>
+    {{end}}
+
+    {{if .CreatePerm}}
+      <p>
+        Visit <a href="/create/{{.DocumentStructure}}/">Document Creation Page</a> to create
+        a document.
+      </p>
+    {{else}}
+      <div>
+        Possible actions are:
+        <ol>
+          <li>Come back later</li>
+          <li>Contact the administrator</li>
+        </ol>
+      </div>
+    {{end}}
+  </div>
+
+{{end}}

@@ -375,14 +375,6 @@ func AddFORMS814Handlers(r *mux.Router) {
   // r.HandleFunc("/search-results/{document-structure}/", searchResults)
   // r.HandleFunc("/search-results/{document-structure}/{page:[0-9]+}/", searchResults)
   // r.HandleFunc("/delete-search-results/{document-structure}/", deleteSearchResults)
-  // r.HandleFunc("/date-lists/{document-structure}/", dateLists)
-  // r.HandleFunc("/date-lists/{document-structure}/{page:[0-9]+}/", dateLists)
-  // r.HandleFunc("/date-list/{document-structure}/{date}/", dateList)
-  // r.HandleFunc("/date-list/{document-structure}/{date}/{page:[0-9]+}/", dateList)
-  // r.HandleFunc("/approved-list/{document-structure}/", approvedList)
-  // r.HandleFunc("/approved-list/{document-structure}/{page:[0-9]+}/", approvedList)
-  // r.HandleFunc("/unapproved-list/{document-structure}/", unapprovedList)
-  // r.HandleFunc("/unapproved-list/{document-structure}/{page:[0-9]+}/", unapprovedList)
 
   // file links
   r.HandleFunc("/serve-js/{library}/", serveJS)
@@ -390,12 +382,6 @@ func AddFORMS814Handlers(r *mux.Router) {
   r.HandleFunc("/delete-file/{document-structure}/{id:[0-9]+}/{name}/", deleteFile)
   r.HandleFunc("/complete-files-delete/", completeFilesDelete)
   r.HandleFunc("/delete-file-from-browser/", deleteFileFromBrowser)
-
-  // // My List links
-  // r.HandleFunc("/mylist-setup/{document-structure}/", myListSetup)
-  // r.HandleFunc("/remove-list-config/{document-structure}/{field}/{data}/", removeOneMylistConfig)
-  // r.HandleFunc("/mylist/{document-structure}/", myList)
-  // r.HandleFunc("/mylist/{document-structure}/{page:[0-9]+}/", myList)
 
   // // Buttons
   // r.HandleFunc("/create-button/", createButton)

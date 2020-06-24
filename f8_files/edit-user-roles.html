@@ -7,28 +7,32 @@
     display: none;
     color: red;
   }
+  #container {
+    width: 700px;
+    margin: 0 auto;
+  }
   </style>
 {{end}}
 
 
 {{define "main"}}
-  <h3> Edit Roles of User {{.FullName}} </h3>
-  <h4> Delete Roles Section</h4>
-  {{range .UserRoles}}
-    <p>{{.}}&nbsp;&nbsp;<a href='/remove-role-from-user/{{$.UserId}}/{{.}}/'>Delete</a></p>
-  {{end}}
-
-  <h4>Add Roles Section</h4>
-  <p id='error-box'></p>
-  <form method="post" action="">
-    {{range .Roles}}
+  <div id="container">
+    <h1> Edit Roles of User {{.FullName}} </h1>
+    
+    <p id='error-box'></p>
+    <form method="post" action="">
+      {{range $index, $el :=  .Roles}}
+        <div>
+          <label> 
+            {{$el}} 
+            <input type="checkbox" name="roles" value="{{$el}}" {{if call $.InUserRoles $el}} checked {{end}} /> 
+          </label>
+        </div>
+      {{end}}
+      <br>
       <div>
-        <label> {{.}} <input type="checkbox" name="roles" value="{{.}}" /> </label>
+        <input type="submit" value="Submit" />
       </div>
-    {{end}}
-    <br>
-    <div>
-      <input type="submit" value="Submit" />
-    </div>
-  </form>
+    </form>
+  </div>
 {{end}}

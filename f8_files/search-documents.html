@@ -1,0 +1,107 @@
+{{define "title"}} Search {{.DocumentStructure}} Documents {{end}}
+
+
+{{define "styles"}}
+  <style>
+  label {
+    display: block;
+  }
+  form div {
+    margin-bottom: 10px;
+  }
+  input, select, textarea {
+    width: 300px;
+  }
+  input[type=submit], input[type=checkbox] {
+    width:auto;
+  }
+  #container {
+    width: fit-content;
+    margin: 0 auto;
+  }
+  </style>
+{{end}}
+
+
+{{define "main"}}
+  <div id="container">
+    <h1>Search {{.DocumentStructure}} Documents</h1>
+
+    <form method="get" action="/search-results/{{.DocumentStructure}}/">
+      {{if .FullReadAccess}}
+        <div>
+          <label>Created By (User ID)</label>
+          <input type="number" name="created_by" />
+        </div>
+      {{end}}
+      
+      <div>
+        <label>Creation Year </label>
+        <input type="number" name="creation-year" />
+      </div>
+
+      <div>
+        <label>Creation Month (Number)</label>
+        <input type="number" name="creation-month" />
+      </div>
+
+      {{range .DDs}}
+        <div>
+          {{ if eq .Type "Section Break"}}
+            <!-- <h4>{{.Label}}</h4> -->
+          {{ else if eq .Type "Table" }}
+
+          {{ else if or (eq .Type "Image") (eq .Type "File")}}
+
+          {{else if eq .Type "Text"}}
+
+          {{else}}
+            <label>{{.Label}}</label>
+          {{ end }}
+
+          {{ if eq .Type "Big Number"}}
+            <input type="number" name="{{.Name}}">
+
+          {{else if eq .Type "Check"}}
+            <input type="checkbox" name="{{.Name}}">
+
+          {{else if eq .Type "Data"}}
+              <input type="text" name="{{.Name}}">
+
+          {{else if eq .Type "Date"}}
+              <input type="date" name="{{.Name}}">
+
+          {{ else if eq .Type "Datetime"}}
+              <input type="datetime-local" name="{{.Name}}">
+
+          {{else if eq .Type "Email"}}
+              <input type="email" name="{{.Name}}">
+
+          {{else if eq .Type "Float"}}
+              <input type="number" step="0.0000001" name="{{.Name}}">
+
+          {{else if or (eq .Type "Int") (eq .Type "Link")}}
+              <input type="number" name="{{.Name}}">
+
+          {{ else if eq .Type "Read Only"}}
+            <input type="text" name="{{.Name}}">
+
+          {{ else if eq .Type "Select"}}
+            <select name="{{.Name}}">
+              {{range .OtherOptions}}
+                <option>{{.}}</option>
+              {{end}}
+            </select>
+
+          {{else if eq .Type "URL"}}
+              <input type="url" name="{{.Name}}">
+          {{end}}
+        </div>
+      {{end}}
+
+      <div>
+        <input type="submit" value="Search" >
+      </div>
+    </form>
+  </div>
+{{end}}

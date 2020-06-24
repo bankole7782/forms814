@@ -1,0 +1,312 @@
+{{define "title"}} New {{.DocumentStructure}} Document {{end}}
+
+
+{{define "styles"}}
+  <style>
+  label {
+    display: block;
+  }
+  form div {
+    margin-bottom: 10px;
+  }
+  input, select, textarea {
+    width: 300px;
+  }
+  input:required {
+    border: 1px solid red;
+    padding: 5px 2px;
+  }
+  input, textarea, select {
+    border: 1px solid gray;
+    padding: 5px 2px;
+  }
+  input[type=submit], input[type=checkbox] {
+    width:auto;
+  }
+  .button-look {
+    text-decoration: none;
+    background-color: gray;
+    color: white;
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 5px;
+  }
+  .button-look:hover {
+    background-color: #ccc;
+  }
+  #help-text-box {
+    margin-bottom: 10px;
+  }
+  h4 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  table input, table select, table textarea {
+    width: 200px;
+  }
+  table thead {
+    font-weight: bold;
+  }
+  </style>
+{{end}}
+
+
+{{define "main"}}
+  <h3>New {{.DocumentStructure}} Document</h3>
+  {{if ne .HelpText ""}}
+    <h4>Help Text</h4>
+    <div id="help-text-box">
+      {{call .UndoEscape .HelpText}}
+    </div>
+  {{end}}
+
+  <form method="post" action="" enctype="multipart/form-data">
+    {{range .DDs}}
+      <div>
+        {{ if eq .Type "Section Break"}}
+          <h4>{{.Label}}</h4>
+        {{ else }}
+          <label>{{.Label}}</label>
+        {{ end }}
+
+        {{if eq .Type "Big Number"}}
+          <input type="number" name="{{.Name}}" {{if .Required}} required {{end}}
+          {{if .ReadOnly}} disabled {{end}}>
+
+        {{else if eq .Type "Check"}}
+          <input type="checkbox" name="{{.Name}}" {{if .Required}} required {{end}}
+          {{if .ReadOnly}} disabled {{end}}>
+
+        {{else if eq .Type "Data"}}
+          <input type="text" name="{{.Name}}" {{if .Required}} required {{end}}
+          {{if .ReadOnly}} disabled {{end}}>
+
+        {{else if eq .Type "Date"}}
+          <input type="date" name="{{.Name}}" {{if .Required}} required {{end}}
+          {{if .ReadOnly}} disabled {{end}}>
+
+        {{ else if eq .Type "Datetime"}}
+          <input type="datetime-local" name="{{.Name}}" {{if .Required}} required {{end}}
+          {{if .ReadOnly}} disabled {{end}}>
+
+        {{else if eq .Type "Email"}}
+
+          <input type="email" name="{{.Name}}" {{if .Required}} required {{end}}
+          {{if .ReadOnly}} disabled {{end}}>
+
+        {{else if eq .Type "File"}}
+          {{ $lengthOtherOptions := len .OtherOptions}}
+          {{if gt $lengthOtherOptions 1}}
+            <input type="file" name="{{.Name}}" accept="{{range .OtherOptions}}.{{.}}, {{end}}" {{if .Required}} required {{end}}>
+          {{else}}
+            <input type="file" name="{{.Name}}" {{if .Required}} required {{end}}>
+          {{end}}
+
+
+        {{else if eq .Type "Float"}}
+          <input type="number" step="0.0000001" name="{{.Name}}" {{if .Required}} required {{end}}
+          {{if .ReadOnly}} disabled {{end}}>
+
+        {{else if eq .Type "Image"}}
+          <input type="file" name="{{.Name}}" accept=".png, .jpg, .jpeg" {{if .Required}} required {{end}}>
+
+        {{else if eq .Type "Int"}}
+          <input type="number" name="{{.Name}}" {{if .Required}} required {{end}}
+          {{if .ReadOnly}} disabled {{end}}>
+
+        {{else if eq .Type "Link"}}
+          <input type="number" name="{{.Name}}" {{if .Required}} required {{end}}
+          {{if .ReadOnly}} disabled {{end}}>
+          <button class="open-linked-document button-look" data-ldds="{{index .OtherOptions 0}}">
+            Open Linked Document
+          </button>
+
+        {{ else if eq .Type "Select"}}
+          <select name="{{.Name}}" {{if .ReadOnly}} disabled {{end}}>
+            {{range .OtherOptions}}
+              <option>{{.}}</option>
+            {{end}}
+          </select>
+
+        {{else if eq .Type "Table"}}
+          {{$childTable := index .OtherOptions 0}}
+          {{$docData := index $.TableFields $childTable}}
+          {{$tblName := .Name}}
+          <input type="hidden" name="rows-count-for-{{.Name}}" value="1" />
+          <table id="{{.Name}}">
+            <thead>
+              <tr>
+                <td>No</td>
+                {{range $docData}}
+                  <td>{{.Label}}</td>
+                {{end}}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                {{range $docData}}
+                  <td>
+                    {{if eq .Type "Big Number"}}
+                        <input type="number" name="{{.Name}}-1" {{if .Required}} required {{end}}
+                        {{if .ReadOnly}} disabled {{end}}>
+
+                    {{else if eq .Type "Check"}}
+                      <input type="checkbox" name="{{.Name}}-1" {{if .Required}} required {{end}}
+                      {{if .ReadOnly}} disabled {{end}}>
+
+                    {{else if eq .Type "Data"}}
+                        <input type="text" name="{{.Name}}-1" {{if .Required}} required {{end}}
+                        {{if .ReadOnly}} disabled {{end}}>
+
+                    {{else if eq .Type "Date"}}
+                      <input type="date" name="{{.Name}}-1" {{if .Required}} required {{end}}
+                      {{if .ReadOnly}} disabled {{end}}>
+
+                    {{ else if eq .Type "Datetime"}}
+                      <input type="datetime-local" name="{{.Name}}-1" {{if .Required}} required {{end}}
+                      {{if .ReadOnly}} disabled {{end}}>
+
+                    {{else if eq .Type "Email"}}
+                      <input type="email" name="{{.Name}}-1" {{if .Required}} required {{end}}
+                      {{if .ReadOnly}} disabled {{end}}>
+
+                    {{else if eq .Type "Float"}}
+                      <input type="number" step="0.0000001" name="{{.Name}}-1" {{if .Required}} required {{end}}
+                      {{if .ReadOnly}} disabled {{end}}>
+
+                    {{else if eq .Type "Int"}}
+                      <input type="number" name="{{.Name}}-1" {{if .Required}} required {{end}}
+                      {{if .ReadOnly}} disabled {{end}}>
+
+                    {{else if eq .Type "Link"}}
+                      <input type="number" name="{{.Name}}-1" {{if .Required}} required {{end}}
+                      {{if .ReadOnly}} disabled {{end}}>
+
+                      <button class="open-linked-document button-look" data-ldds="{{index .OtherOptions 0}}">
+                        Open Linked Document
+                      </button>
+
+                    {{ else if eq .Type "Select"}}
+                      <select name="{{.Name}}-1" {{if .ReadOnly}} disabled {{end}}>
+                        {{range .OtherOptions}}
+                          <option>{{.}}</option>
+                        {{end}}
+                      </select>
+
+                    {{else if eq .Type "Text"}}
+                      <textarea name="{{.Name}}-1" {{if .Required}} required {{end}}
+                      {{if .ReadOnly}} disabled {{end}}></textarea>
+
+                    {{else if eq .Type "URL"}}
+                      <input type="url" name="{{.Name}}-1" {{if .Required}} required {{end}}
+                      {{if .ReadOnly}} disabled {{end}}>
+
+                    {{end}}
+
+                  </td>
+                {{end}}
+
+                <td>
+                  <button type="button" id="delete-row-{{$tblName}}-1" class="delete-row-btn">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <button type="button" class="add-row button-look">Add Row</button>
+
+        {{else if eq .Type "Text"}}
+          <textarea name="{{.Name}}" {{if .Required}} required {{end}}
+          {{if .ReadOnly}} disabled {{end}}></textarea>
+
+        {{else if eq .Type "URL"}}
+          <input type="url" name="{{.Name}}" {{if .Required}} required {{end}}
+          {{if .ReadOnly}} disabled {{end}}>
+
+        {{end}}
+      </div>
+    {{end}}
+
+    <div>
+      <input type="submit" class="button-look" value="Create" >
+    </div>
+  </form>
+
+{{end}}
+
+
+{{define "scripts"}}
+  <script>
+  function deleteRowHandler(e) {
+    e.preventDefault();
+
+    var parentTable = $(e.target).parents('table');
+    $(e.target).parents('tr').remove();
+    setRowsCount(parentTable);
+
+    // reset the numbers
+    $('tbody tr', parentTable).each(function(i, el) {
+      var newNo = i + 1;
+      var strNewNo = newNo.toString()
+      $('td:first', el).text(strNewNo);
+      $('.delete-row-btn', el).attr('id', 'delete-row-' + $(parentTable).attr('id') + "-" + strNewNo);
+
+      $('input, textarea, select', el).each(function(ii, elel) {
+        var elelname = $(elel).attr('name');
+        for (var j = 2; j < 4; j++) {
+          if (elelname[elelname.length-j] == "-") {
+            var newName = elelname.substr(0, elelname.length-j) + "-" + strNewNo;
+            $(elel).attr("name", newName);
+            break
+          }
+        }
+      });
+
+    });
+  }
+
+
+  function setRowsCount(table) {
+    var tid = $(table).attr('id');
+    $('input[name=rows-count-for-' + tid + ']').val( $('tbody tr', table).length );
+  }
+
+  $(document).ready(function() {
+    $('.delete-row-btn').hide();
+
+    $('.add-row').click(function(e) {
+      var table = $(e.target).prev();
+      var currentNo = parseInt($('tr:last td:first', table).text());
+      var newNo = currentNo + 1;
+      var html = $('tr:last', table).html();
+      var re = new RegExp(currentNo.toString(), 'g');
+      html = html.replace(re, newNo.toString());
+
+      html = "<tr>" + html + "</tr>";
+      $('tbody', table).append(html);
+
+      var newDR = '#delete-row-' + $(table).attr('id') + '-' + newNo.toString()
+      $(newDR).click(deleteRowHandler);
+
+      // $('.delete-row-btn').show();
+      // $('.delete-row-btn:first').hide();
+      $(newDR).show();
+      autosize( $("textarea", table));
+
+      $('html, body').scrollTop($(document).height());
+      setRowsCount(table);
+    });
+
+    $('.open-linked-document').click(function(e) {
+      e.preventDefault();
+
+      var inputEl = $(e.target).prev();
+      if ( $(inputEl).val() != "") {
+        window.open("/update/" + $(e.target).data("ldds") + "/" + $(inputEl).val() + "/", "_blank");
+      }
+
+    });
+
+  });
+  </script>
+{{end}}

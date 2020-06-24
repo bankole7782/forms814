@@ -1,0 +1,25 @@
+{{define "title"}} What Next ? {{end}}
+
+{{define "styles"}}
+<style>
+
+</style>
+{{end}}
+
+
+{{define "main"}}
+<h3> What Next ? </h3>
+<p>Your <b>{{.DocumentStructure}}</b> document has been successfully created. </p>
+<p>What do you want to do next?</p>
+<ol>
+	<li>
+		<a href="/list/{{.DocumentStructure}}/">View Lists of <b>{{.DocumentStructure}}</b> Documents</a>
+	</li>
+	<li>
+		<a href="/create/{{.DocumentStructure}}/">Create Another <b>{{.DocumentStructure}}</b> Document</a>
+	</li>
+	<li>
+		<a href="/update/{{.DocumentStructure}}/{{.LastId}}/">Review what you just created.</a>
+	</li>
+</ol>
+{{end}}

@@ -14,58 +14,64 @@
   li {
     margin-bottom: 10px;
   }
+  #container {
+    width: fit-content;
+    margin: 0 auto;
+  }
   </style>
 {{end}}
 
 
 {{define "main"}}
-  <h3>Roles Management</h3>
-  {{if .NumberOfRoles}}
-  <ol>
-    {{ range .Roles }}
-      <li>
-        <a href="/view-role-members/{{.}}/">{{.}}</a>
-        <a style="margin-left: 30px" href="/delete-role/{{.}}/">Delete</a>
-      </li>
-    {{end}}
-  </ol>
-  {{ else }}
-    <p>You have not defined any roles </p>
-  {{ end }}
+  <div id="container">
+    <h1>Roles Management</h1>
+    {{if .NumberOfRoles}}
+    <ol>
+      {{ range .Roles }}
+        <li>
+          <a href="/view-role-members/{{.}}/">{{.}}</a>
+          <a style="margin-left: 30px" href="/delete-role/{{.}}/">Delete</a>
+        </li>
+      {{end}}
+    </ol>
+    {{ else }}
+      <p>You have not defined any roles </p>
+    {{ end }}
 
-  <h3>New Roles Form</h3>
-  <p>Enter each role on one line</p>
+    <h3>New Roles Form</h3>
+    <p>Enter each role on one line</p>
 
-  <form method="post" action="/new-roles/" >
-    <div>
-      <label for='id-role'>Name(s) of role</label><br>
-      <textarea id="id-roles" name="roles" required ></textarea>
-    </div>
-    <br>
-    <div>
-      <input type="submit" value="Create Role(s)" />
-    </div>
-  </form>
+    <form method="post" action="/new-roles/" >
+      <div>
+        <label for='id-role'>Name(s) of role</label><br>
+        <textarea id="id-roles" name="roles" required ></textarea>
+      </div>
+      <br>
+      <div>
+        <input type="submit" value="Create Role(s)" />
+      </div>
+    </form>
 
-  <h3>Renaming Roles </h3>
-  <span id='error-box'></span>
-  <form method="post" action="/rename-role/" id="rename-role-form">
-    <div>
-      <label for="id-roles-select">Role to Rename</label>&nbsp;&nbsp;
-      <select id="id-roles-select" name="role-to-rename">
-        {{range .Roles}}
-          <option>{{.}}</option>
-        {{end}}
-      </select>
-    </div>
-    <div>
-      <label for="id-new-name">New Name</label>&nbsp;&nbsp;
-      <input type="text" id="id-new-name" name="new-name" value="" />
-    </div>
-    <div>
-      <input type="submit" value="Rename Role" />
-    </div>
-  </form>
+    <h3>Renaming Roles </h3>
+    <span id='error-box'></span>
+    <form method="post" action="/rename-role/" id="rename-role-form">
+      <div>
+        <label for="id-roles-select">Role to Rename</label>&nbsp;&nbsp;
+        <select id="id-roles-select" name="role-to-rename">
+          {{range .Roles}}
+            <option>{{.}}</option>
+          {{end}}
+        </select>
+      </div>
+      <div>
+        <label for="id-new-name">New Name</label>&nbsp;&nbsp;
+        <input type="text" id="id-new-name" name="new-name" value="" />
+      </div>
+      <div>
+        <input type="submit" value="Rename Role" />
+      </div>
+    </form>
+  </div>
 {{end}}
 
 

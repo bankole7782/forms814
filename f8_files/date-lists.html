@@ -1,0 +1,19 @@
+{{define "title"}} Dates of Creation of {{.DocumentStructure}} Documents {{end}}
+
+{{define "main"}}
+  <h3>Dates of Creation of {{.DocumentStructure}} Documents</h3>
+
+  {{range .DACs}}
+    <div>
+      <a href="/date-list/{{$.DocumentStructure}}/{{.Date}}/">{{.Date}} ( {{.Count}} Documents) </a>
+    </div>
+  {{end}}
+
+  <br><br>
+  <div id="pagination">
+      Pages:
+      {{range .Pages}}
+        <a class="pagination-link" href="/date-lists/{{$.DocumentStructure}}/{{.}}/">{{.}}</a>
+      {{end}}
+  </div>
+{{end}}

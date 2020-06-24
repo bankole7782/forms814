@@ -27,27 +27,33 @@
   .button-look:hover {
     background-color: #ccc;
   }
+  #container {
+    width: fit-content;
+    margin: 0 auto;
+  }
   </style>
 {{end}}
 
 
 {{define "main"}}
-  <h3>List of Document Structures</h3>
-  <ol>
-  {{range .DocumentStructures}}
-    <li>
-      {{if .ChildTable}}
-        <span>{{.DSName}} (A Child Table)</span>
-      {{else}}
-        <a class='view-link' href='/list/{{.DSName}}/'>{{.DSName}}</a>
-        <a class="button-look" href='/create/{{.DSName}}/'>Create Document</a>
-      {{end}}
-      <a class="button-look" href="/view-document-structure/{{.DSName}}/">View Document Structure</a>
-      <a class='button-look' href='/delete-document-structure/{{.DSName}}/'>Delete</a>
-      <a class="button-look" href='/new-ds-from-template/{{.DSName}}/'>Create a similar Document Structure</a>
-    </li>
-  {{end}}
-  </ol>
+  <div id="container">
+    <h1>List of Document Structures</h1>
+    <ol>
+    {{range .DocumentStructures}}
+      <li>
+        {{if .ChildTable}}
+          <span>{{.DSName}} (A Child Table)</span>
+        {{else}}
+          <a class='view-link' href='/list/{{.DSName}}/'>{{.DSName}}</a>
+          <a class="button-look" href='/create/{{.DSName}}/'>Create Document</a>
+        {{end}}
+        <a class="button-look" href="/view-document-structure/{{.DSName}}/">View Document Structure</a>
+        <a class='button-look' href='/delete-document-structure/{{.DSName}}/'>Delete</a>
+        <a class="button-look" href='/new-ds-from-template/{{.DSName}}/'>Create a similar Document Structure</a>
+      </li>
+    {{end}}
+    </ol>
 
-  <h4><a href="/new-document-structure/">New Document Structure</a></h4>
+    <h4><a href="/new-document-structure/">New Document Structure</a></h4>
+  </div>
 {{end}}
