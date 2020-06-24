@@ -280,7 +280,6 @@ func GetDocData(documentStructure string) ([]DocData, error) {
   if err != nil {
     return dds, err
   }
-  var label, name, type_, options, otherOptions string
 
   rows, err := FRCL.Search(fmt.Sprintf(`
   	table: qf_fields
@@ -292,6 +291,8 @@ func GetDocData(documentStructure string) ([]DocData, error) {
     return dds, err
   }
   for _, row := range *rows {
+    var label, name, type_, options, otherOptions string
+
     label = row["label"].(string)
     name = row["name"].(string)
     type_ = row["type"].(string)

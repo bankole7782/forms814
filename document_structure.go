@@ -572,3 +572,86 @@ func editDocumentStructurePermissions(w http.ResponseWriter, r *http.Request) {
   }
 
 }
+
+
+func newDSFromTemplate(w http.ResponseWriter, r *http.Request) {
+  truthValue, err := isUserAdmin(r)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  if ! truthValue {
+    errorPage(w, "You are not an admin here. You don't have permissions to view this page.")
+    return
+  }
+
+  vars := mux.Vars(r)
+  ds := vars["document-structure"]
+
+  detv, err := docExists(ds)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  if detv == false {
+    errorPage(w, fmt.Sprintf("The document structure %s does not exists.", ds))
+    return
+  }
+
+  docDatas, err := GetDocData(ds)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+
+  row, err := FRCL.SearchForOne(fmt.Sprintf(`
+    table: qf_document_structures
+    where:
+      fullname = '%s'
+    `, ds))
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  var helpTextStr string
+  childTableBool := (*row)["child_table"].(bool)
+  if htAny, ok := (*row)["help_text"]; ok {
+    helpTextStr = htAny.(string)
+  }
+
+  ctdsList, err := GetDocumentStructureList("only-child-tables")
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+
+  dsList, err := GetDocumentStructureList("all")
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+
+  type Context struct {
+    DocDatas []DocData
+    DocumentStructure string
+    Add func(x, y int) int
+    IsChildTable bool
+    HelpText string
+    FormatOtherOptions func([]string) string
+    ChildTableDocumentStructures string
+    DocumentStructures string
+  }
+
+  add := func(x, y int) int {
+    return x + y
+  }
+
+  ffunc := func(x []string) string {
+    return strings.Join(x, "\n")
+  }
+
+  ctx := Context{docDatas, ds, add, childTableBool, helpTextStr, ffunc, strings.Join(ctdsList, ",,,"), 
+    strings.Join(dsList, ",,,")}
+  tmpl := template.Must(template.ParseFiles(getBaseTemplate(), "f8_files/new-ds-from-template.html"))
+  tmpl.Execute(w, ctx)
+}
