@@ -8,3 +8,5 @@ require (
 	github.com/gorilla/mux v1.7.4
 	golang.org/x/net v0.0.0-20200602114024-627f9648deb9
 )
+
+replace github.com/bankole7782/flaarum => /home/bankole/flaarum

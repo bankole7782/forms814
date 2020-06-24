@@ -4,7 +4,7 @@ import (
   "strings"
   "net/http"
   "fmt"
-  // "strconv"
+  "strconv"
   "os"
   "html/template"
   // "html"
@@ -26,17 +26,19 @@ func getBaseTemplate() string {
 func errorPage(w http.ResponseWriter, msg string) {
   _, fn, line, _ := runtime.Caller(1)
   type Context struct {
-    Message string
+    Message template.HTML
     SourceFn string
     SourceLine int
     QF_DEVELOPER bool
   }
 
   var ctx Context
-  if os.Getenv("QF_DEVELOPER") == "true" {
-    ctx = Context{msg, fn, line, true}
+  if os.Getenv("F8_DEVELOPER") == "true" {
+    msg = strings.ReplaceAll(msg, "\n", "<br>")
+    msg = strings.ReplaceAll(msg, "\t", "&nbsp;&nbsp;&nbsp;")
+    ctx = Context{template.HTML(msg), fn, line, true}
   } else {
-    ctx = Context{msg, fn, line, false}
+    ctx = Context{template.HTML(msg), fn, line, false}
   }
   tmpl := template.Must(template.ParseFiles(getBaseTemplate(), "f8_files/error-page.html"))
   tmpl.Execute(w, ctx)
@@ -117,7 +119,12 @@ func getRoleId(role string) (int64, error) {
 		return 0, err
 	}
 
-	return (*row)["id"].(int64), nil
+  idStr := (*row)["id"].(string)
+  idInt64, err := strconv.ParseInt(idStr, 10, 64)
+  if err != nil {
+    return 0, err
+  }
+  return idInt64, nil
 }
 
 
@@ -247,7 +254,12 @@ func getDocumentStructureID(documentStructure string) (int64, error) {
 		return 0, err
 	}
 
-	return (*row)["id"].(int64), nil
+  idStr := (*row)["id"].(string)
+  idInt64, err := strconv.ParseInt(idStr, 10, 64)
+  if err != nil {
+    return 0, err
+  }
+	return idInt64, nil
 }
 
 

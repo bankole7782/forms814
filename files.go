@@ -80,9 +80,9 @@ func serveJS(w http.ResponseWriter, r *http.Request) {
   lib := vars["library"]
 
   if lib == "jquery" {
-    http.ServeFile(w, r, "qffiles/jquery-3.3.1.min.js")
+    http.ServeFile(w, r, "f8_files/jquery-3.3.1.min.js")
   } else if lib == "autosize" {
-    http.ServeFile(w, r, "qffiles/autosize.min.js")
+    http.ServeFile(w, r, "f8_files/autosize.min.js")
   }
 }
 

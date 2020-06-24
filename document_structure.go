@@ -437,7 +437,13 @@ func viewDocumentStructure(w http.ResponseWriter, r *http.Request) {
     errorPage(w, err.Error())
     return
   }
-  id := (*row)["id"].(int64)
+  idStr := (*row)["id"].(string)
+  id, err := strconv.ParseInt(idStr, 10, 64)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+
   tblName := (*row)["tbl_name"].(string)
   publicBool := (*row)["public"].(bool)
   childTableBool := (*row)["child_table"].(bool)
@@ -454,8 +460,6 @@ func viewDocumentStructure(w http.ResponseWriter, r *http.Request) {
     Id int64
     Add func(x, y int) int
     RPS []RolePermissions
-    ApproversStr string
-    HasApprovers bool
     ChildTable bool
     TableName string
     Public bool
@@ -465,26 +469,13 @@ func viewDocumentStructure(w http.ResponseWriter, r *http.Request) {
     return x + y
   }
 
-  rps, err := getRolePermissions(ds)
-  if err != nil {
+  rps, err1 := getRolePermissions(ds)
+  if err1 != nil {
     errorPage(w, err.Error())
     return
   }
 
-  approvers, err := getApprovers(ds)
-  if err != nil {
-    errorPage(w, err.Error())
-    return
-  }
-  var hasApprovers bool
-  if len(approvers) == 0 {
-    hasApprovers = false
-  } else {
-    hasApprovers = true
-  }
-
-  ctx := Context{ds, docDatas, id, add, rps, strings.Join(approvers, ", "), hasApprovers,
-    childTableBool, tblName, publicBool}
+  ctx := Context{ds, docDatas, id, add, rps, childTableBool, tblName, publicBool}
   tmpl := template.Must(template.ParseFiles(getBaseTemplate(), "f8_files/view-document-structure.html"))
   tmpl.Execute(w, ctx)
 }

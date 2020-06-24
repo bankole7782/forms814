@@ -95,14 +95,6 @@
       </tbody>
     </table>
     <a href="/edit-document-structure-permissions/{{.DocumentStructure}}/">Edit Permissions</a>
-
-    <h3>Approval Framework</h3>
-    {{ if $.HasApprovers }}
-      <p>Approval Steps: <b>{{.ApproversStr}}</b></p>
-      <a href="/remove-approvals-from-document-structure/{{.DocumentStructure}}/">Remove Approval Framework</a>
-    {{else}}
-      <a href="/add-approvals-to-document-structure/{{.DocumentStructure}}/">Add Approval Framework</a>
-    {{end}}
   {{end}}
 
 {{end}}
