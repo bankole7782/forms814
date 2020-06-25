@@ -84,7 +84,7 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
     limit: 3
     where:
       dsid = %d
-      and type nin 'Section Break' 'File' 'Image' 'Table'
+      and type nin 'Section Break' File Image Table
     `, dsid))
   if err != nil {
     errorPage(w, err.Error())
