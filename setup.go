@@ -6,7 +6,7 @@ import (
   "github.com/gorilla/mux"
   "net/url"
   "strings"
-  // "html/template"
+  "html/template"
   "github.com/bankole7782/flaarum"
   "github.com/bankole7782/flaarum/flaarum_shared"
 )
@@ -326,9 +326,8 @@ func AddFORMS814Handlers(r *mux.Router) {
   // Please call this link first to do your setup.
   r.HandleFunc("/forms814-setup/", forms814Setup)
 
-  // // admin pages
-  // r.HandleFunc("/qf-page/", qfPage)
-  // r.HandleFunc("/qf-upgrade/", qfUpgrade)
+  // admin pages
+  r.HandleFunc("/forms814-page/", forms814Page)
 
   // document structure links
   r.HandleFunc("/new-document-structure/", newDocumentStructure)
@@ -388,4 +387,20 @@ func AddFORMS814Handlers(r *mux.Router) {
   r.HandleFunc("/list-buttons/", listButtons)
   r.HandleFunc("/delete-button/{id}/", deleteButton)
 
+}
+
+
+func forms814Page(w http.ResponseWriter, r *http.Request) {
+  truthValue, err := isUserAdmin(r)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  if ! truthValue {
+    errorPage(w, "You are not an admin here. You don't have permissions to view this page.")
+    return
+  }
+
+  tmpl := template.Must(template.ParseFiles(getBaseTemplate(), "f8_files/forms814-page.html"))
+  tmpl.Execute(w, nil)
 }
