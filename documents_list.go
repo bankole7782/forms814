@@ -139,7 +139,7 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
 
     orderByFragment += fmt.Sprintf(" %s %s", dbName, direction)
   } else {
-    orderByFragment += " created desc"
+    orderByFragment += " id desc"
   }
 
   uocPerm, err1 := DoesCurrentUserHavePerm(r, ds, "update-only-created")

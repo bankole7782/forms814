@@ -542,3 +542,26 @@ func BoolToStr(b bool) string {
     return "f"
   }
 }
+
+
+func GetCurrentUserRolesIds(r *http.Request) ([]string, error) {
+  userid, err := GetCurrentUser(r)
+  if err != nil {
+    return nil, err
+  }
+
+  rows, err := FRCL.Search(fmt.Sprintf(`
+    table: qf_user_roles
+    where:
+      userid = %s
+    `, userid))
+  if err != nil {
+    return nil, err
+  }
+
+  rids := make([]string, 0)
+  for _, row := range *rows {
+    rids = append(rids, fmt.Sprintf("%d", row["roleid"].(int)))
+  }
+  return rids, nil
+}
