@@ -206,7 +206,12 @@ func usersToRolesList(w http.ResponseWriter, r *http.Request) {
   }
 
   for _, row := range *rows {
-    userid := row["id"].(int64)
+    userIdStr := row["id"].(string)
+    userid, err := strconv.ParseInt(userIdStr, 10, 64)
+    if err != nil {
+      errorPage(w, err.Error())
+      return
+    }
 
     roles := make([]string, 0)
 
@@ -313,9 +318,19 @@ func editUserRoles(w http.ResponseWriter, r *http.Request) {
       UserRoles []string
       Roles []string
       FullName string
+      InUserRoles func (role string) bool
     }
 
-    ctx := Context{userid, userRoles, roles, firstname + " " + surname}
+    iur := func (role string) bool {
+      for _, r := range userRoles {
+        if r == role {
+          return true
+        }
+      }
+      return false
+    }
+
+    ctx := Context{userid, userRoles, roles, firstname + " " + surname, iur}
     tmpl := template.Must(template.ParseFiles(getBaseTemplate(), "f8_files/edit-user-roles.html"))
     tmpl.Execute(w, ctx)
 
@@ -323,6 +338,17 @@ func editUserRoles(w http.ResponseWriter, r *http.Request) {
 
     r.ParseForm()
     newRoles := r.PostForm["roles"]
+
+    err := FRCL.DeleteRows(fmt.Sprintf(`
+      table: qf_user_roles
+      where:
+        userid = %d
+      `, useridInt64))
+    if err != nil {
+      errorPage(w, err.Error())
+      return
+    }
+    
     for _, str := range newRoles {
       roleid, err := getRoleId(str)
       if err != nil {
