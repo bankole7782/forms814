@@ -533,3 +533,12 @@ func getEC(documentStructure string) (ExtraCode, bool) {
   }
   return ExtraCode{}, false
 }
+
+
+func BoolToStr(b bool) string {
+  if b {
+    return "t"
+  } else {
+    return "f"
+  }
+}

@@ -370,7 +370,7 @@ func AddFORMS814Handlers(r *mux.Router) {
   // r.HandleFunc("/update/{document-structure}/{id:[0-9]+}/", updateDocument)
   r.HandleFunc("/list/{document-structure}/", listDocuments)
   r.HandleFunc("/list/{document-structure}/{page:[0-9]+}/", listDocuments)
-  // r.HandleFunc("/delete/{document-structure}/{id:[0-9]+}/", deleteDocument)
+  r.HandleFunc("/delete/{document-structure}/{id:[0-9]+}/", deleteDocument)
   // r.HandleFunc("/search/{document-structure}/", searchDocuments)
   // r.HandleFunc("/search-results/{document-structure}/", searchResults)
   // r.HandleFunc("/search-results/{document-structure}/{page:[0-9]+}/", searchResults)

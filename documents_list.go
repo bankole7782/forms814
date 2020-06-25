@@ -187,6 +187,8 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
         data = flaarum.RightDateTimeFormat(dInType)
       case string:
         data = dInType
+      case bool:
+        data = BoolToStr(dInType)
       }
 
       colAndDatas = append(colAndDatas, ColAndData{colLabel.Label, data})
