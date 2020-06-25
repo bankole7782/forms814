@@ -197,77 +197,67 @@ func deleteDocument(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// func deleteSearchResults(w http.ResponseWriter, r *http.Request) {
-//   vars := mux.Vars(r)
-//   ds := vars["document-structure"]
+func deleteSearchResults(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  ds := vars["document-structure"]
 
-//   detv, err := docExists(ds)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
-//   if detv == false {
-//     errorPage(w, fmt.Sprintf("The document structure %s does not exists.", ds))
-//     return
-//   }
+  detv, err := docExists(ds)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  if detv == false {
+    errorPage(w, fmt.Sprintf("The document structure %s does not exists.", ds))
+    return
+  }
 
 
-//   endSqlStmt, err := parseSearchVariables(r)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+  whereFragmentParts, err := parseSearchVariables(r)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
 
-//   if len(endSqlStmt) == 0 {
-//     errorPage(w, "Your query is empty.")
-//     return
-//   }
+  if len(whereFragmentParts) == 0 {
+    errorPage(w, "Your query is empty.")
+    return
+  }
 
-//   tblName, err := tableName(ds)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+  tblName, err := tableName(ds)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
 
-//   var toDeleteDocId string
-//   sqlStmt := fmt.Sprintf("select id from `%s` where ", tblName) + strings.Join(endSqlStmt, " and ")
-//   rows, err := SQLDB.Query(sqlStmt)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
-//   defer rows.Close()
-//   for rows.Next() {
-//     err := rows.Scan(&toDeleteDocId)
-//     if err != nil {
-//       errorPage(w, err.Error())
-//       return
-//     }
+  rows, err := FRCL.Search(fmt.Sprintf(`
+    table: %s
+    where:
+      %s
+    `, tblName, strings.Join(whereFragmentParts, "\n and ")))
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  for _, row := range *rows {
+    err = innerDeleteDocument(r, row["id"].(string), false)
+    if err != nil {
+      errorPage(w, err.Error())
+      return
+    }
+  }
 
-//     err = innerDeleteDocument(r, toDeleteDocId, false)
-//     if err != nil {
-//       errorPage(w, err.Error())
-//       return
-//     }
-//   }
-//   err = rows.Err()
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+  hasForm, err := documentStructureHasForm(ds)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
 
-//   hasForm, err := documentStructureHasForm(ds)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
-
-//   var redirectURL string
-//   if hasForm {
-//     redirectURL = "/complete-files-delete/"
-//   } else {
-//     redirectURL = fmt.Sprintf("/list/%s/", ds)    
-//   }
+  var redirectURL string
+  if hasForm {
+    redirectURL = "/complete-files-delete/"
+  } else {
+    redirectURL = fmt.Sprintf("/list/%s/", ds)    
+  }
   
-//   http.Redirect(w, r, redirectURL, 307)
-// }
+  http.Redirect(w, r, redirectURL, 307)
+}

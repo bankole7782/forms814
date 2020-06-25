@@ -374,7 +374,7 @@ func AddFORMS814Handlers(r *mux.Router) {
   r.HandleFunc("/search/{document-structure}/", searchDocuments)
   r.HandleFunc("/search-results/{document-structure}/", searchResults)
   r.HandleFunc("/search-results/{document-structure}/{page:[0-9]+}/", searchResults)
-  // r.HandleFunc("/delete-search-results/{document-structure}/", deleteSearchResults)
+  r.HandleFunc("/delete-search-results/{document-structure}/", deleteSearchResults)
 
   // file links
   r.HandleFunc("/serve-js/{library}/", serveJS)
