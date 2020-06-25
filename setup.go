@@ -366,7 +366,7 @@ func AddFORMS814Handlers(r *mux.Router) {
   r.HandleFunc("/remove-role-from-user-2/{userid}/{role}/", removeRoleFromUser2)
 
   // // document links
-  // r.HandleFunc("/create/{document-structure}/", createDocument)
+  r.HandleFunc("/create/{document-structure}/", createDocument)
   // r.HandleFunc("/update/{document-structure}/{id:[0-9]+}/", updateDocument)
   // r.HandleFunc("/list/{document-structure}/", listDocuments)
   // r.HandleFunc("/list/{document-structure}/{page:[0-9]+}/", listDocuments)

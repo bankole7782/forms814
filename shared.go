@@ -518,3 +518,18 @@ func DoesCurrentUserHavePerm(r *http.Request, documentStructure, permission stri
 
   return false, nil
 }
+
+
+func getEC(documentStructure string) (ExtraCode, bool) {
+  dsid, err := getDocumentStructureID(documentStructure)
+  if err != nil {
+    return ExtraCode{}, false
+  }
+
+
+  ec, ok := ExtraCodeMap[dsid]
+  if ok {
+    return ec, true
+  }
+  return ExtraCode{}, false
+}
