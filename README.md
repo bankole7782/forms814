@@ -40,9 +40,9 @@ ensure that you can use any form of authentication you want eg. social auth (Fac
 fingerprint, keys etc.
 
 Create a users table with the following properties:
-* users table must have a primary key id with type bigint unsigned
-* it must also have fields `firstname` and `surname` for easy recognition.
-* it must also have field `email` for communications.
+
+1. it must also have fields `firstname` and `surname` for easy recognition.
+2. it must also have field `email` for communications.
 
 You must also provide a function that would get the currently logged in users. The function is given the request object
 to get the cookies for its purpose. Set the `forms814.GetCurrentUser` to this function. The function has the following
