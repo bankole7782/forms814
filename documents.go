@@ -170,9 +170,9 @@ func createDocument(w http.ResponseWriter, r *http.Request) {
             case "Check":
               var data string
               if tempData == "on" {
-                data = "\"t\""
+                data = "t"
               } else {
-                data = "\"f\""
+                data = "f"
               }
               toInsertCT[ddCT.Name] = data
             default:
@@ -436,7 +436,7 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
         }
         dASSuper := make([][]docAndStructure, 0)
 
-        parts := strings.Split(data, ",")
+        parts := strings.Split(data, ",,,")
         for _, part := range parts {
           ctblName, err := tableName(childTable)
           if err != nil {
@@ -561,209 +561,178 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
     tmpl.Execute(w, ctx)
 
   } else if r.Method == http.MethodPost {
-    // if ! updatePerm {
-    //   errorPage(w, "You don't have permissions to update this document.")
-    //   return
-    // }
+    if ! updatePerm {
+      errorPage(w, "You don't have permissions to update this document.")
+      return
+    }
 
-    // r.FormValue("email")
+    r.FormValue("email")
 
-    // // first check if it passes the extra code validation for this document.
-    // ec, ectv := getEC(ds)
-    // if ectv && ec.ValidationFn != nil {
-    //   outString := ec.ValidationFn(r.PostForm)
-    //   if outString != "" {
-    //     errorPage(w, "Exra Code Validation Error: " + outString)
-    //     return
-    //   }
-    // }
+    // first check if it passes the extra code validation for this document.
+    ec, ectv := getEC(ds)
+    if ectv && ec.ValidationFn != nil {
+      outString := ec.ValidationFn(r.PostForm)
+      if outString != "" {
+        errorPage(w, "Exra Code Validation Error: " + outString)
+        return
+      }
+    }
 
-    // var ctx context.Context
-    // var client *storage.Client
-    // hasForm, err := documentStructureHasForm(ds)
-    // if hasForm {
-    //   ctx = context.Background()
-    //   client, err = storage.NewClient(ctx)
-    //   if err != nil {
-    //     errorPage(w, err.Error())
-    //     return
-    //   }
-    // }
+    var ctx context.Context
+    var client *storage.Client
+    hasForm, err := documentStructureHasForm(ds)
+    if hasForm {
+      ctx = context.Background()
+      client, err = storage.NewClient(ctx)
+      if err != nil {
+        errorPage(w, err.Error())
+        return
+      }
+    }
 
-    // colNames := make([]string, 0)
-    // formData := make([]string, 0)
-    // for _, docAndStructure := range docAndStructureSlice {
-    //   if docAndStructure.DocData.Type == "Table" {
-    //     // delete old table data
-    //     parts := strings.Split(docAndStructure.Data, ",")
-    //     for _, part := range parts {
-    //       ottblName, err := tableName(docAndStructure.DocData.OtherOptions[0])
-    //       if err != nil {
-    //         errorPage(w, "Error getting table name of the table in other options.")
-    //         return
-    //       }
+    toUpdate := make(map[string]string)
+    for _, docAndStructure := range docAndStructureSlice {
+      if docAndStructure.DocData.Type == "Table" {
+        // delete old table data
+        parts := strings.Split(docAndStructure.Data, ",")
+        for _, part := range parts {
+          ottblName, err := tableName(docAndStructure.DocData.OtherOptions[0])
+          if err != nil {
+            errorPage(w, "Error getting table name of the table in other options.")
+            return
+          }
 
-    //       sqlStmt = fmt.Sprintf("delete from `%s` where id = ?", ottblName)
-    //       _, err = SQLDB.Exec(sqlStmt, part)
-    //       if err != nil {
-    //         errorPage(w, err.Error())
-    //         return
-    //       }
-    //     }
+          err = FRCL.DeleteRows(fmt.Sprintf(`
+            table: %s
+            where:
+              id = %s
+            `, ottblName, part))
+          if err != nil {
+            errorPage(w, err.Error())
+            return
+          }
+        }
 
-    //     // add new table data
-    //     childTableName := docAndStructure.DocData.OtherOptions[0]
-    //     ddsCT, err := GetDocData(childTableName)
-    //     if err != nil {
-    //       errorPage(w, err.Error())
-    //       return
-    //     }
+        // add new table data
+        childTableName := docAndStructure.DocData.OtherOptions[0]
+        ddsCT, err := GetDocData(childTableName)
+        if err != nil {
+          errorPage(w, err.Error())
+          return
+        }
 
-    //     rowCount := r.FormValue("rows-count-for-" + docAndStructure.DocData.Name)
-    //     rowCountInt, _ := strconv.Atoi(rowCount)
-    //     rowIds := make([]string, 0)
-    //     for j := 1; j < rowCountInt + 1; j++ {
-    //       colNamesCT := make([]string, 0)
-    //       formDataCT := make([]string, 0)
-    //       jStr := strconv.Itoa(j)
-    //       for _, ddCT := range ddsCT {
-    //         colNamesCT = append(colNamesCT, ddCT.Name)
-    //         tempData := r.FormValue(ddCT.Name + "-" + jStr)
-    //         switch ddCT.Type {
-    //         case "Text", "Data", "Email", "Read Only", "URL", "Select", "Date", "Datetime":
-    //           var data string
-    //           if tempData == "" {
-    //             data = "null"
-    //           } else {
-    //             data = fmt.Sprintf("\"%s\"", html.EscapeString(tempData))
-    //           }
-    //           formDataCT = append(formDataCT, data)
-    //         case "Check":
-    //           var data string
-    //           if tempData == "on" {
-    //             data = "\"t\""
-    //           } else {
-    //             data = "\"f\""
-    //           }
-    //           formDataCT = append(formDataCT, data)
-    //         default:
-    //           var data string
-    //           if tempData == "" {
-    //             data = "null"
-    //           } else {
-    //             data = html.EscapeString(tempData)
-    //           }
-    //           formDataCT = append(formDataCT, data)
-    //         }
-    //       }
-    //       ctblName, err := tableName(childTableName)
-    //       if err != nil {
-    //         errorPage(w, err.Error())
-    //         return
-    //       }
-    //       sqlStmt := fmt.Sprintf("insert into `%s`(%s) values (%s)", ctblName,
-    //         strings.Join(colNamesCT, ", "), strings.Join(formDataCT, ", "))
-    //       res, err := SQLDB.Exec(sqlStmt)
-    //       if err != nil {
-    //         errorPage(w, err.Error())
-    //         return
-    //       }
-    //       lastid, err := res.LastInsertId()
-    //       if err != nil {
-    //         errorPage(w, err.Error())
-    //         return
-    //       }
+        rowCount := r.FormValue("rows-count-for-" + docAndStructure.DocData.Name)
+        rowCountInt, _ := strconv.Atoi(rowCount)
+        rowIds := make([]string, 0)
+        for j := 1; j < rowCountInt + 1; j++ {
 
-    //       rowIds = append(rowIds, strconv.FormatInt(lastid, 10))
-    //     }
-    //     colNames = append(colNames, docAndStructure.DocData.Name)
-    //     formData = append(formData, fmt.Sprintf("\"%s\"", strings.Join(rowIds, ",")))
+          toInsertCT := make(map[string]string)
 
-    //   } else if docAndStructure.Type == "Image" || docAndStructure.Type == "File" {
-    //     file, handle, err := r.FormFile(docAndStructure.DocData.Name)
-    //     if err != nil {
-    //       continue
-    //     }
-    //     defer file.Close()
+          jStr := strconv.Itoa(j)
+          for _, ddCT := range ddsCT {
+            tempData := r.FormValue(ddCT.Name + "-" + jStr)
+            switch ddCT.Type {
+            case "Check":
+              var data string
+              if tempData == "on" {
+                data = "t"
+              } else {
+                data = "f"
+              }
+              toInsertCT[ddCT.Name] = data
+            default:
+              if tempData != "" {
+                toInsertCT[ddCT.Name] = html.EscapeString(tempData)
+              }
+            }
+          }
+          ctblName, err := tableName(childTableName)
+          if err != nil {
+            errorPage(w, err.Error())
+            return
+          }
 
-    //     var newFileName string
-    //     for {
-    //       randomFileName := filepath.Join(tblName,
-    //         fmt.Sprintf("%s%s%s", untestedRandomString(100),
-    //         FILENAME_SEPARATOR, handle.Filename))
+          lastid, err := FRCL.InsertRowStr(ctblName, toInsertCT)
+          if err != nil {
+            errorPage(w, err.Error())
+            return
+          }
 
-    //       objHandle := client.Bucket(QFBucketName).Object(randomFileName)
-    //       _, err := objHandle.NewReader(ctx)
-    //       if err == nil {
-    //         continue
-    //       }
+          rowIds = append(rowIds, lastid)
+        }
+        toUpdate[docAndStructure.DocData.Name] = strings.Join(rowIds, ",,,")
+      } else if docAndStructure.Type == "Image" || docAndStructure.Type == "File" {
+        file, handle, err := r.FormFile(docAndStructure.DocData.Name)
+        if err != nil {
+          continue
+        }
+        defer file.Close()
 
-    //       wc := objHandle.NewWriter(ctx)
-    //       if _, err := io.Copy(wc, file); err != nil {
-    //         errorPage(w, err.Error())
-    //         return
-    //       }
-    //       if err := wc.Close(); err != nil {
-    //         errorPage(w, err.Error())
-    //         return
-    //       }
-    //       newFileName = randomFileName
+        var newFileName string
+        for {
+          randomFileName := filepath.Join(tblName,
+            fmt.Sprintf("%s%s%s", untestedRandomString(100),
+            FILENAME_SEPARATOR, handle.Filename))
 
-    //       // delete any file that was previously stored.
-    //       var datum sql.NullString
-    //       sqlStmt = fmt.Sprintf("select %s from `%s` where id = ?", docAndStructure.DocData.Name, tblName)
-    //       SQLDB.QueryRow(sqlStmt, docid).Scan(&datum)
-    //       if datum.Valid {
-    //         client.Bucket(QFBucketName).Object(datum.String).Delete(ctx)
-    //       }
-    //       break
-    //     }
-    //     colNames = append(colNames, docAndStructure.DocData.Name)
-    //     formData = append(formData, fmt.Sprintf("\"%s\"", newFileName))
-    //   } else if docAndStructure.Data != html.EscapeString(r.FormValue(docAndStructure.DocData.Name)) {
+          objHandle := client.Bucket(BucketName).Object(randomFileName)
+          _, err := objHandle.NewReader(ctx)
+          if err == nil {
+            continue
+          }
 
-    //     colNames = append(colNames, docAndStructure.DocData.Name)
-    //     switch docAndStructure.DocData.Type {
-    //     case "Text", "Data", "Email", "Read Only", "URL", "Select", "Date", "Datetime":
-    //       data := fmt.Sprintf("\"%s\"", html.EscapeString(r.FormValue(docAndStructure.DocData.Name)))
-    //       formData = append(formData, data)
-    //     case "Check":
-    //       var data string
-    //       if r.FormValue(docAndStructure.DocData.Name) == "on" {
-    //         data = "\"t\""
-    //       } else {
-    //         data = "\"f\""
-    //       }
-    //       formData = append(formData, data)
-    //     default:
-    //       formData = append(formData, html.EscapeString(r.FormValue(docAndStructure.DocData.Name)))
-    //     }
-    //   }
-    // }
+          wc := objHandle.NewWriter(ctx)
+          if _, err := io.Copy(wc, file); err != nil {
+            errorPage(w, err.Error())
+            return
+          }
+          if err := wc.Close(); err != nil {
+            errorPage(w, err.Error())
+            return
+          }
+          newFileName = randomFileName
 
-    // updatePartStmt := make([]string, 0)
-    // updatePartStmt = append(updatePartStmt, "modified = now()")
-    // for i := 0; i < len(colNames); i++ {
-    //   stmt1 := fmt.Sprintf("%s = %s", colNames[i], formData[i])
-    //   updatePartStmt = append(updatePartStmt, stmt1)
-    // }
+          // delete any file that was previously stored.
+          client.Bucket(BucketName).Object((*arow)[docAndStructure.DocData.Name].(string)).Delete(ctx)
+          break
+        }
+        toUpdate[docAndStructure.DocData.Name] = newFileName
+      } else if docAndStructure.Data != html.EscapeString(r.FormValue(docAndStructure.DocData.Name)) {
 
-    // sqlStmt = fmt.Sprintf("update `%s` set %s where id = ?", tblName, strings.Join(updatePartStmt, ", "))
-    // _, err = SQLDB.Exec(sqlStmt, docid)
-    // if err != nil {
-    //   errorPage(w, err.Error())
-    //   return
-    // }
+        switch docAndStructure.DocData.Type {
+        case "Check":
+          var data string
+          if r.FormValue(docAndStructure.DocData.Name) == "on" {
+            data = "t"
+          } else {
+            data = "f"
+          }
+          toUpdate[docAndStructure.DocData.Name] = data
+        default:
+          toUpdate[docAndStructure.DocData.Name] = html.EscapeString(r.FormValue(docAndStructure.DocData.Name))
+        }
+      }
+    }
 
-    // // post save extra code
-    // if ectv && ec.AfterUpdateFn != nil {
-    //   docidUint64, _ := strconv.ParseUint(docid, 10, 64)
-    //   ec.AfterUpdateFn(docidUint64)
-    // }
+    toUpdate["modified"] = flaarum.RightDateTimeFormat(time.Now())
 
-    // redirectURL := fmt.Sprintf("/list/%s/", ds)
-    // http.Redirect(w, r, redirectURL, 307)
+    err = FRCL.UpdateRowsStr(fmt.Sprintf(`
+      table: %s
+      where:
+        id = %s
+      `, tblName, docid), toUpdate)
+    if err != nil {
+      errorPage(w, err.Error())
+      return
+    }
+
+    // post save extra code
+    if ectv && ec.AfterUpdateFn != nil {
+      docIdInt64, _ := strconv.ParseInt(docid, 10, 64)
+      ec.AfterUpdateFn(docIdInt64)
+    }
+
+    redirectURL := fmt.Sprintf("/list/%s/", ds)
+    http.Redirect(w, r, redirectURL, 307)
   }
 
 }
-
