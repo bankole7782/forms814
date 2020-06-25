@@ -78,7 +78,7 @@ func newRole(w http.ResponseWriter, r *http.Request) {
       }
 
       if ! found {
-        _, err := FRCL.InsertRowAny("qf_roles", map[string]interface{} {"role": r})
+        _, err := FRCL.InsertRowAny("f8_roles", map[string]interface{} {"role": r})
         if err != nil {
           errorPage(w, err.Error())
           return
@@ -104,7 +104,7 @@ func renameRole(w http.ResponseWriter, r *http.Request) {
 
   if r.Method == http.MethodPost {
     err := FRCL.UpdateRowsAny(fmt.Sprintf(`
-      table: qf_roles
+      table: f8_roles
       where:
         role = '%s'
       `, html.EscapeString(r.FormValue("role-to-rename") )),
@@ -135,7 +135,7 @@ func deleteRole(w http.ResponseWriter, r *http.Request) {
   role := vars["role"]
 
   err = FRCL.DeleteRows(fmt.Sprintf(`
-    table: qf_roles
+    table: f8_roles
     where:
       role = '%s'
     `, role))
@@ -340,7 +340,7 @@ func editUserRoles(w http.ResponseWriter, r *http.Request) {
     newRoles := r.PostForm["roles"]
 
     err := FRCL.DeleteRows(fmt.Sprintf(`
-      table: qf_user_roles
+      table: f8_user_roles
       where:
         userid = %d
       `, useridInt64))
@@ -356,7 +356,7 @@ func editUserRoles(w http.ResponseWriter, r *http.Request) {
         return
       }
 
-      _, err = FRCL.InsertRowAny("qf_user_roles", map[string]interface{} {"userid": useridInt64, "roleid": roleid})
+      _, err = FRCL.InsertRowAny("f8_user_roles", map[string]interface{} {"userid": useridInt64, "roleid": roleid})
       if err != nil {
         errorPage(w, err.Error())
         return
@@ -393,7 +393,7 @@ func removeRoleFromUserInner(role, userid string) error {
   }
 
   err = FRCL.DeleteRows(fmt.Sprintf(`
-    table: qf_user_roles
+    table: f8_user_roles
     where:
       userid = %d
       and roleid = %d
@@ -468,7 +468,7 @@ func deleteRolePermissions(w http.ResponseWriter, r *http.Request) {
   }
 
   err = FRCL.DeleteRows(fmt.Sprintf(`
-    table: qf_permissions
+    table: f8_permissions
     where:
       roleid = %d
       and dsid = %d
@@ -584,7 +584,7 @@ func viewRoleMembers(w http.ResponseWriter, r *http.Request) {
   uss := make([]UserSummary, 0)
 
   rows, err := FRCL.Search(fmt.Sprintf(`
-    table: qf_user_roles expand
+    table: f8_user_roles expand
     order_by: userid.firstname asc
     where:
       roleid.role = '%s'

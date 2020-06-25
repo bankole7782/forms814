@@ -63,12 +63,6 @@ func innerDeleteDocument(r *http.Request, docid string, deleteFile bool) error {
     return err
   }
 
-  // var id int
-  // err = SQLDB.QueryRow("select id from qf_document_structures where fullname = ?", ds).Scan(&id)
-  // if err != nil {
-  //   return err
-  // }
-
   ec, ectv := getEC(ds)
 
   dds, err := GetDocData(ds)
@@ -154,7 +148,7 @@ func innerDeleteDocument(r *http.Request, docid string, deleteFile bool) error {
         }        
       } else {
         if dd.Type == "File" || dd.Type == "Image" {
-          _, err = FRCL.InsertRowAny("qf_files_for_delete", map[string]interface{} {
+          _, err = FRCL.InsertRowAny("f8_files_for_delete", map[string]interface{} {
             "created_by": userIdInt64, "filepath": fData[dd.Name],
           })
           if err != nil {

@@ -26,7 +26,7 @@ func serveFileForQF(w http.ResponseWriter, r *http.Request) {
 	tableName := parts[0]
 
 	row, err := FRCL.SearchForOne(fmt.Sprintf(`
-		table: qf_document_structures
+		table: f8_document_structures
 		where:
 			tbl_name = %s
 		`, tableName))
@@ -198,7 +198,7 @@ func completeFilesDelete(w http.ResponseWriter, r *http.Request) {
   }
 
   count, err := FRCL.CountRows(fmt.Sprintf(`
-  	table: qf_files_for_delete
+  	table: f8_files_for_delete
   	where:
   		created_by = %d
   	`, useridInt64))
@@ -213,7 +213,7 @@ func completeFilesDelete(w http.ResponseWriter, r *http.Request) {
   }
 
   rows, err := FRCL.Search(fmt.Sprintf(`
-  	table: qf_files_for_delete
+  	table: f8_files_for_delete
   	where:
   		created_by = %d
   	`, useridInt64))
@@ -260,7 +260,7 @@ func deleteFileFromBrowser(w http.ResponseWriter, r *http.Request) {
   }
 
   err = FRCL.DeleteRows(fmt.Sprintf(`
-  	table: qf_files_for_delete
+  	table: f8_files_for_delete
   	where:
   		filepath = '%s'
   	`, fp))

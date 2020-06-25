@@ -76,7 +76,7 @@ func isUserInspector(r *http.Request) (bool, error) {
 func GetRoles() ([]string, error) {
   strSlice := make([]string, 0)
   rows, err := FRCL.Search(`
-  	table: qf_roles
+  	table: f8_roles
   	order_by: role asc
   	`)
   if err != nil {
@@ -93,7 +93,7 @@ func getUserRoles(userid int64) ([]string, error) {
 	roles := make([]string, 0)
 
   rows2, err := FRCL.Search(fmt.Sprintf(`
-    table: qf_user_roles expand
+    table: f8_user_roles expand
     where:
       userid = %d
     `, userid))
@@ -111,7 +111,7 @@ func getUserRoles(userid int64) ([]string, error) {
 
 func getRoleId(role string) (int64, error) {
 	row, err := FRCL.SearchForOne(fmt.Sprintf(`
-		table: qf_roles
+		table: f8_roles
 		where:
 			role = '%s'
 		`, role))
@@ -135,19 +135,19 @@ func GetDocumentStructureList(situation string) ([]string, error) {
   var err error
   if situation == "only-child-tables" {
   	rows, err = FRCL.Search(`
-  		table: qf_document_structures
+  		table: f8_document_structures
   		fields: fullname
   		where:
   			child_table = t
   		`)
   } else if situation == "all" {
 	  rows, err = FRCL.Search(`
-	  	table: qf_document_structures
+	  	table: f8_document_structures
 			fields: fullname  	
 	  	`)
   } else if situation == "not-child-tables" {
   	rows, err = FRCL.Search(`
-  		table: qf_document_structures
+  		table: f8_document_structures
   		fields: fullname
   		where:
   			child_table = f
@@ -182,7 +182,7 @@ func newTableName() (string, error) {
   for {
     newName := "qftbl_" + untestedRandomString(3)
     count, err := FRCL.CountRows(fmt.Sprintf(`
-    	table: qf_document_structures
+    	table: f8_document_structures
     	where:
     		tbl_name = %s
     	`, newName))
@@ -198,7 +198,7 @@ func newTableName() (string, error) {
 
 func tableName(documentStructure string) (string, error) {
 	row, err := FRCL.SearchForOne(fmt.Sprintf(`
-		table: qf_document_structures
+		table: f8_document_structures
 		fields: tbl_name
 		where:
 			fullname = '%s'
@@ -246,7 +246,7 @@ func docExists(documentName string) (bool, error) {
 
 func getDocumentStructureID(documentStructure string) (int64, error) {
 	row, err := FRCL.SearchForOne(fmt.Sprintf(`
-		table: qf_document_structures
+		table: f8_document_structures
 		where:
 			fullname = '%s'			
 		`, documentStructure))
@@ -282,7 +282,7 @@ func GetDocData(documentStructure string) ([]DocData, error) {
   }
 
   rows, err := FRCL.Search(fmt.Sprintf(`
-  	table: qf_fields
+  	table: f8_fields
   	order_by: view_order asc
   	where:
   		dsid = %d
@@ -334,7 +334,7 @@ type RolePermissions struct {
 func getRolePermissions(documentStructure string) ([]RolePermissions, error) {
   rps := make([]RolePermissions, 0)
   rows, err := FRCL.Search(fmt.Sprintf(`
-  	table: qf_permissions expand
+  	table: f8_permissions expand
   	where:
   		dsid.fullname = '%s'
   	`, documentStructure))
@@ -351,7 +351,7 @@ func getRolePermissions(documentStructure string) ([]RolePermissions, error) {
 func getApprovers(documentStructure string) ([]string, error) {
   approversList := make([]string, 0)
   row, err := FRCL.SearchForOne(fmt.Sprintf(`
-  	table: qf_document_structures
+  	table: f8_document_structures
   	where:
   		fullname = '%s'
   	`, documentStructure))
@@ -381,7 +381,7 @@ func getApprovalTable(documentStructure, role string) (string, error) {
   }
 
   row, err := FRCL.SearchForOne(fmt.Sprintf(`
-  	table: qf_approvals_tables
+  	table: f8_approvals_tables
   	where:
   		dsid = %d
   		and roleid = %d
@@ -412,7 +412,7 @@ func newApprovalTableName() (string, error) {
   for {
     newName := "qfatbl_" + untestedRandomString(4)
     count, err := FRCL.CountRows(fmt.Sprintf(`
-    	table: qf_approvals_tables
+    	table: f8_approvals_tables
     	where:
     		tbl_name = %s
     	`, newName))
@@ -428,7 +428,7 @@ func newApprovalTableName() (string, error) {
 
 func documentStructureHasForm(documentStructure string) (bool, error) {
   count, err := FRCL.CountRows(fmt.Sprintf(`
-  	table: qf_fields expand
+  	table: f8_fields expand
   	where:
   		dsid.fullname = %s
   		and type in File Image
@@ -473,7 +473,7 @@ func DoesCurrentUserHavePerm(r *http.Request, documentStructure, permission stri
   }
 
   rows, err := FRCL.Search(fmt.Sprintf(`
-  	table: qf_user_roles
+  	table: f8_user_roles
   	where:
   		userid = %d
   	`, userid))
@@ -489,7 +489,7 @@ func DoesCurrentUserHavePerm(r *http.Request, documentStructure, permission stri
   for _, row := range *rows {
   	rid := row["roleid"].(int64)
     count, err := FRCL.CountRows(fmt.Sprintf(`
-    	table: qf_permissions
+    	table: f8_permissions
     	where:
     		dsid = %d
     		and roleid = %d
@@ -501,7 +501,7 @@ func DoesCurrentUserHavePerm(r *http.Request, documentStructure, permission stri
       continue
     }
     arow, err := FRCL.SearchForOne(fmt.Sprintf(`
-    	table: qf_permissions
+    	table: f8_permissions
     	where:
     		dsid = %d
     		and roleid = %d
@@ -551,7 +551,7 @@ func GetCurrentUserRolesIds(r *http.Request) ([]string, error) {
   }
 
   rows, err := FRCL.Search(fmt.Sprintf(`
-    table: qf_user_roles
+    table: f8_user_roles
     where:
       userid = %s
     `, userid))

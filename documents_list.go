@@ -79,7 +79,7 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
   }
 
   frows, err := FRCL.Search(fmt.Sprintf(`
-    table: qf_fields
+    table: f8_fields
     order_by: view_order asc
     limit: 3
     where:
@@ -117,7 +117,7 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
       dbName = "modified"
     } else {
       row1, err := FRCL.SearchForOne(fmt.Sprintf(`
-        table: qf_fields
+        table: f8_fields
         where:
           dsid = %d
           and label = '%s'
@@ -252,7 +252,7 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
   }
 
   frows2, err := FRCL.Search(fmt.Sprintf(`
-    table: qf_fields
+    table: f8_fields
     order_by: view_order asc
     where:
       dsid = %d

@@ -59,7 +59,7 @@ func createDocument(w http.ResponseWriter, r *http.Request) {
   }
 
   arow, err := FRCL.SearchForOne(fmt.Sprintf(`
-    table: qf_document_structures
+    table: f8_document_structures
     where:
       fullname = '%s'
     `, ds))
@@ -370,7 +370,7 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
   }
 
   dsRow, err := FRCL.SearchForOne(fmt.Sprintf(`
-    table: qf_document_structures
+    table: f8_document_structures
     where:
       fullname = '%s'
     `, ds))
@@ -512,13 +512,13 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
     }
 
     if len(rids) != 0 {
-      // qStmt := fmt.Sprintf(`select distinct qf_buttons.name, qf_buttons.url_prefix from qf_buttons inner join qf_btns_and_roles
-      // on qf_buttons.id = qf_btns_and_roles.buttonid where qf_btns_and_roles.roleid in ( %s ) and dsid = ?
+      // qStmt := fmt.Sprintf(`select distinct f8_buttons.name, f8_buttons.url_prefix from f8_buttons inner join f8_btns_and_roles
+      // on f8_buttons.id = f8_btns_and_roles.buttonid where f8_btns_and_roles.roleid in ( %s ) and dsid = ?
       // `, strings.Join(rids, " , "))
 
 
       rows, err := FRCL.Search(fmt.Sprintf(`
-        table: qf_btns_and_roles expand distinct
+        table: f8_btns_and_roles expand distinct
         fields: buttonid.name buttonid.url_prefix
         where:
           roleid in %s

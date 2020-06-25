@@ -90,7 +90,7 @@ func newDocumentStructure(w http.ResponseWriter, r *http.Request) {
       toInsert["child_table"] = false
     }
 
-    dsid, err := FRCL.InsertRowAny("qf_document_structures", toInsert)
+    dsid, err := FRCL.InsertRowAny("f8_document_structures", toInsert)
     if err != nil {
       errorPage(w, err.Error())
       return
@@ -101,7 +101,7 @@ func newDocumentStructure(w http.ResponseWriter, r *http.Request) {
         "dsid": dsid, "label": o.label, "name": o.name, "type": o.type_, "options": o.options,
         "other_options": o.other_options, "view_order": i + 1,
       }
-      _, err = FRCL.InsertRowAny("qf_fields", toInsertQFFields)
+      _, err = FRCL.InsertRowAny("f8_fields", toInsertQFFields)
       if err != nil {
         errorPage(w, err.Error())
         return
@@ -207,7 +207,7 @@ func listDocumentStructures(w http.ResponseWriter, r *http.Request) {
   structDSList := make([]DS, 0)
 
   rows, err := FRCL.Search(`
-    table: qf_document_structures
+    table: f8_document_structures
     fields: fullname child_table
     order_by: fullname asc
     `)
@@ -255,7 +255,7 @@ func deleteDocumentStructure(w http.ResponseWriter, r *http.Request) {
   }
 
   row, err := FRCL.SearchForOne(fmt.Sprintf(`
-    table: qf_document_structures
+    table: f8_document_structures
     where:
       fullname = '%s'
     `, ds))
@@ -269,7 +269,7 @@ func deleteDocumentStructure(w http.ResponseWriter, r *http.Request) {
     dsidsUsingThisCT := make([]int64, 0)
 
     rows, err := FRCL.Search(fmt.Sprintf(`
-      table: qf_fields
+      table: f8_fields
       where:
         other_options = '%s'
       `, ds))
@@ -309,7 +309,7 @@ func deleteDocumentStructure(w http.ResponseWriter, r *http.Request) {
     }
 
     err = FRCL.DeleteRows(fmt.Sprintf(`
-      table: qf_approvals_tables expand
+      table: f8_approvals_tables expand
       where:
         dsid.fullname = '%s'
         and roleid.role = '%s'
@@ -366,7 +366,7 @@ func deleteDocumentStructure(w http.ResponseWriter, r *http.Request) {
         }
 
         for _, fp := range filepaths {
-          _, err = FRCL.InsertRowAny("qf_files_for_delete", 
+          _, err = FRCL.InsertRowAny("f8_files_for_delete", 
             map[string]interface{} {"created_by": useridInt64, "filepath": fp})
           if err != nil {
             panic(err)
@@ -384,7 +384,7 @@ func deleteDocumentStructure(w http.ResponseWriter, r *http.Request) {
   }
 
   err = FRCL.DeleteRows(fmt.Sprintf(`
-    table: qf_document_structures
+    table: f8_document_structures
     where:
       fullname = '%s'
     `, ds))
@@ -428,7 +428,7 @@ func viewDocumentStructure(w http.ResponseWriter, r *http.Request) {
   }
 
   row, err := FRCL.SearchForOne(fmt.Sprintf(`
-    table: qf_document_structures
+    table: f8_document_structures
     fields: tbl_name id public child_table
     where:
       fullname = '%s'
@@ -558,7 +558,7 @@ func editDocumentStructurePermissions(w http.ResponseWriter, r *http.Request) {
         errorPage(w, err.Error())
         return
       }
-      _, err = FRCL.InsertRowAny("qf_permissions", map[string]interface{} {
+      _, err = FRCL.InsertRowAny("f8_permissions", map[string]interface{} {
         "roleid": roleid, "dsid": dsid, "permissions": rp.Permissions,
       })
       if err != nil {
@@ -605,7 +605,7 @@ func newDSFromTemplate(w http.ResponseWriter, r *http.Request) {
   }
 
   row, err := FRCL.SearchForOne(fmt.Sprintf(`
-    table: qf_document_structures
+    table: f8_document_structures
     where:
       fullname = '%s'
     `, ds))

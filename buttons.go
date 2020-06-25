@@ -50,7 +50,7 @@ func createButton(w http.ResponseWriter, r *http.Request) {
       return
     }
 
-    btnid, err := FRCL.InsertRowAny("qf_buttons", map[string]interface{} {
+    btnid, err := FRCL.InsertRowAny("f8_buttons", map[string]interface{} {
       "name": r.FormValue("button_name"),
       "dsid": dsid,
       "url_prefix": r.FormValue("url_prefix"),
@@ -68,7 +68,7 @@ func createButton(w http.ResponseWriter, r *http.Request) {
         errorPage(w, err.Error())
         return
       }
-      _, err = FRCL.InsertRowStr("qf_btns_and_roles", map[string]string { 
+      _, err = FRCL.InsertRowStr("f8_btns_and_roles", map[string]string { 
         "roleid": fmt.Sprintf("%d", roleid), "buttonid": btnid })
       if err != nil {
         errorPage(w, err.Error())
@@ -103,7 +103,7 @@ func listButtons(w http.ResponseWriter, r *http.Request) {
   qfbs := make([]QFButton, 0)
 
   rows, err := FRCL.Search(`
-    table: qf_buttons expand
+    table: f8_buttons expand
     order_by: name asc
     `)
   if err != nil {
@@ -114,7 +114,7 @@ func listButtons(w http.ResponseWriter, r *http.Request) {
     dsName := row["dsid.fullname"].(string)
     buttonId := row["id"].(string)
     rows2, err := FRCL.Search(fmt.Sprintf(`
-      table: qf_btns_and_roles expand
+      table: f8_btns_and_roles expand
       order_by: roleid.role asc
       where:
         buttonid = %s
@@ -157,7 +157,7 @@ func deleteButton(w http.ResponseWriter, r *http.Request) {
   bid := vars["id"]
 
   err = FRCL.DeleteRows(fmt.Sprintf(`
-    table: qf_buttons
+    table: f8_buttons
     where:
       id = %s
     `, bid))

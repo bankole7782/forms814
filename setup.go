@@ -138,7 +138,7 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
 
   // create forms general table
   err := createOrUpdateTable(`
-  	table: qf_document_structures
+  	table: f8_document_structures
   	fields:
   		fullname string required unique
   		tbl_name string required unique
@@ -155,7 +155,7 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
 
   // create fields table
   err = createOrUpdateTable(`
-  	table: qf_fields
+  	table: f8_fields
   	fields:
   		dsid int required
   		label string required
@@ -166,7 +166,7 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
   		view_order int
   	::
   	foreign_keys:
-  		dsid qf_document_structures on_delete_delete
+  		dsid f8_document_structures on_delete_delete
   	::
   	unique_groups:
   		dsid name
@@ -178,7 +178,7 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
   }
 
   err = createOrUpdateTable(`
-  	table: qf_roles
+  	table: f8_roles
   	fields:
   		role string required unique
   	::
@@ -189,15 +189,15 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
   }
 
   err = createOrUpdateTable(`
-  	table: qf_approvals_tables
+  	table: f8_approvals_tables
   	fields:
   		dsid int required
   		roleid int required
   		tbl_name string required unique
   	::
   	foreign_keys:
-  		dsid qf_document_structures on_delete_delete
-  		roleid qf_roles on_delete_delete
+  		dsid f8_document_structures on_delete_delete
+  		roleid f8_roles on_delete_delete
   	::
   	unique_groups:
   		dsid roleid
@@ -209,15 +209,15 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
   }
 
   err = createOrUpdateTable(`
-  	table: qf_permissions
+  	table: f8_permissions
   	fields:
   		dsid int required
   		roleid int required
   		permissions text required
   	::
   	foreign_keys:
-  		dsid qf_document_structures on_delete_delete
-  		roleid qf_roles on_delete_delete
+  		dsid f8_document_structures on_delete_delete
+  		roleid f8_roles on_delete_delete
   	::
   	unique_groups:
   		dsid roleid
@@ -229,14 +229,14 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
   }
 
   err = createOrUpdateTable(`
-  	table: qf_user_roles
+  	table: f8_user_roles
   	fields:
   		userid int required
   		roleid int required
   	::
   	foreign_keys:
   		userid users on_delete_delete
-  		roleid qf_roles on_delete_delete
+  		roleid f8_roles on_delete_delete
   	::
   	unique_groups:
   		userid roleid
@@ -248,14 +248,14 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
   }
 
   err = createOrUpdateTable(`
-  	table: qf_buttons
+  	table: f8_buttons
   	fields:
   		name string required
   		dsid int required
   		url_prefix string required
   	::
   	foreign_keys:
-  		dsid qf_document_structures on_delete_delete
+  		dsid f8_document_structures on_delete_delete
   	::
   	unique_groups:
   		name dsid
@@ -267,7 +267,7 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
   }
 
   err = createOrUpdateTable(`
-  	table: qf_mylistoptions
+  	table: f8_mylistoptions
   	fields:
   		userid int required
   		dsid int required
@@ -276,7 +276,7 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
   	::
   	foreign_keys:
   		userid users on_delete_delete
-  		dsid qf_document_structures on_delete_delete
+  		dsid f8_document_structures on_delete_delete
   	::
   	`)
   if err != nil {
@@ -285,7 +285,7 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
   }
 
   err = createOrUpdateTable(`
-  	table: qf_files_for_delete
+  	table: f8_files_for_delete
   	fields:
   		created_by int required
   		filepath string required
@@ -297,14 +297,14 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
   }
 
   err = createOrUpdateTable(`
-  	table: qf_btns_and_roles
+  	table: f8_btns_and_roles
   	fields:
   		roleid int required
   		buttonid int required
   	::
   	foreign_keys:
-  		roleid qf_roles on_delete_delete
-  		buttonid qf_buttons on_delete_delete
+  		roleid f8_roles on_delete_delete
+  		buttonid f8_buttons on_delete_delete
   	::
   	unique_groups:
   		roleid buttonid

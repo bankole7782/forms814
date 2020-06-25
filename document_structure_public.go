@@ -32,7 +32,7 @@ func makePublic(w http.ResponseWriter, r *http.Request) {
   }
 
   err = FRCL.UpdateRowsAny(fmt.Sprintf(`
-    table: qf_document_structures
+    table: f8_document_structures
     where:
       fullname = '%s'
     `, ds), map[string]interface{} { "public": true})
@@ -70,7 +70,7 @@ func undoMakePublic(w http.ResponseWriter, r *http.Request) {
   }
 
   err = FRCL.UpdateRowsAny(fmt.Sprintf(`
-    table: qf_document_structures
+    table: f8_document_structures
     where:
       fullname = '%s'
     `, ds), map[string]interface{} { "public": false})
@@ -85,7 +85,7 @@ func undoMakePublic(w http.ResponseWriter, r *http.Request) {
 
 func publicState(documentStructure string) (bool, error) {
   row, err := FRCL.SearchForOne(fmt.Sprintf(`
-    table: qf_document_structures
+    table: f8_document_structures
     where:
       fullname = '%s'
     `, documentStructure))
