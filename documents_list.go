@@ -10,6 +10,7 @@ import (
   "strconv"
   "time"
   "github.com/bankole7782/flaarum"
+  "strings"
 )
 
 
@@ -335,176 +336,168 @@ func listDocuments(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// func searchDocuments(w http.ResponseWriter, r *http.Request) {
-//   vars := mux.Vars(r)
-//   ds := vars["document-structure"]
+func searchDocuments(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  ds := vars["document-structure"]
 
-//   detv, err := docExists(ds)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
-//   if detv == false {
-//     errorPage(w, fmt.Sprintf("The document structure %s does not exists.", ds))
-//     return
-//   }
+  detv, err := docExists(ds)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  if detv == false {
+    errorPage(w, fmt.Sprintf("The document structure %s does not exists.", ds))
+    return
+  }
 
-//   tv1, err := DoesCurrentUserHavePerm(r, ds, "read")
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+  tv1, err := DoesCurrentUserHavePerm(r, ds, "read")
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
 
-//   tv2, err := DoesCurrentUserHavePerm(r, ds, "read-only-created")
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+  tv2, err := DoesCurrentUserHavePerm(r, ds, "read-only-created")
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
 
-//   if ! tv1 && ! tv2 {
-//     errorPage(w, "You don't have the read permission for this document structure.")
-//     return
-//   }
+  if ! tv1 && ! tv2 {
+    errorPage(w, "You don't have the read permission for this document structure.")
+    return
+  }
 
-//   dds, err := GetDocData(ds)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+  dds, err := GetDocData(ds)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
 
-//   type Context struct {
-//     DocumentStructure string
-//     DDs []DocData
-//     FullReadAccess bool
-//   }
-//   ctx := Context{ds, dds, tv1}
-//   tmpl := template.Must(template.ParseFiles(getBaseTemplate(), "f8_files/search-documents.html"))
-//   tmpl.Execute(w, ctx)
-// }
-
-
-// func parseSearchVariables(r *http.Request) ([]string, error) {
-//   vars := mux.Vars(r)
-//   ds := vars["document-structure"]
-
-//   dds, err := GetDocData(ds)
-//   if err != nil {
-//     return nil, err
-//   }
-
-//   endSqlStmt := make([]string, 0)
-//   for _, dd := range dds {
-//     if dd.Type == "Section Break" || dd.Type == "Image" || dd.Type == "File" {
-//       continue
-//     }
-//     if r.FormValue(dd.Name) == "" {
-//       continue
-//     }
-
-//     switch dd.Type {
-//     case "Text", "Data", "Email", "Read Only", "URL", "Select", "Date", "Datetime":
-//       var data string
-//       if r.FormValue(dd.Name) == "" {
-//         data = "null"
-//       } else {
-//         data = fmt.Sprintf("\"%s\"", html.EscapeString(r.FormValue(dd.Name)))
-//       }
-//       endSqlStmt = append(endSqlStmt, dd.Name + " = " + data)
-//     case "Check":
-//       var data string
-//       if r.FormValue(dd.Name) == "on" {
-//         data = "\"t\""
-//       } else {
-//         data = "\"f\""
-//       }
-//       endSqlStmt = append(endSqlStmt, dd.Name + " = " + data)
-//     default:
-//       var data string
-//       if r.FormValue(dd.Name) == "" {
-//         data = "null"
-//       } else {
-//         data = html.EscapeString(r.FormValue(dd.Name))
-//       }
-//       endSqlStmt = append(endSqlStmt, dd.Name + " = " + data)
-//     }
-//   }
-
-//   if r.FormValue("created_by") != "" {
-//     endSqlStmt = append(endSqlStmt, "created_by = " + html.EscapeString(r.FormValue("created_by")))
-//   }
-//   if r.FormValue("creation-year") != "" {
-//     data := fmt.Sprintf("\"%s\"", html.EscapeString(r.FormValue("creation-year")))
-//     endSqlStmt = append(endSqlStmt, "extract(year from created) = " + data)
-//   }
-//   if r.FormValue("creation-month") != "" {
-//     data := fmt.Sprintf("\"%s\"", html.EscapeString(r.FormValue("creation-month")))
-//     endSqlStmt = append(endSqlStmt, "extract(month from created) = " + data)
-//   }
-
-//   return endSqlStmt, nil
-// }
+  type Context struct {
+    DocumentStructure string
+    DDs []DocData
+    FullReadAccess bool
+  }
+  ctx := Context{ds, dds, tv1}
+  tmpl := template.Must(template.ParseFiles(getBaseTemplate(), "f8_files/search-documents.html"))
+  tmpl.Execute(w, ctx)
+}
 
 
-// func searchResults(w http.ResponseWriter, r *http.Request) {
-//   userIdInt64, err := GetCurrentUser(r)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+func parseSearchVariables(r *http.Request) ([]string, error) {
+  vars := mux.Vars(r)
+  ds := vars["document-structure"]
 
-//   vars := mux.Vars(r)
-//   ds := vars["document-structure"]
+  dds, err := GetDocData(ds)
+  if err != nil {
+    return nil, err
+  }
 
-//   detv, err := docExists(ds)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
-//   if detv == false {
-//     errorPage(w, fmt.Sprintf("The document structure %s does not exists.", ds))
-//     return
-//   }
+  whereFragmentParts := make([]string, 0)
+  for _, dd := range dds {
+    if dd.Type == "Section Break" || dd.Type == "Image" || dd.Type == "File" {
+      continue
+    }
+    if r.FormValue(dd.Name) == "" {
+      continue
+    }
 
-//   tv1, err := DoesCurrentUserHavePerm(r, ds, "read")
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
-//   tv2, err := DoesCurrentUserHavePerm(r, ds, "read-only-created")
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+    switch dd.Type {
+    case "Text", "Data", "Email", "Read Only", "URL", "Select", "Date", "Datetime":
+      data := fmt.Sprintf("'%s'", html.EscapeString(r.FormValue(dd.Name)))
+      whereFragmentParts = append(whereFragmentParts, dd.Name + " = " + data)
+    case "Check":
+      var data string
+      if r.FormValue(dd.Name) == "on" {
+        data = "t"
+      } else {
+        data = "f"
+      }
+      whereFragmentParts = append(whereFragmentParts, dd.Name + " = " + data)
+    default:
+      data := html.EscapeString(r.FormValue(dd.Name))
+      whereFragmentParts = append(whereFragmentParts, dd.Name + " = " + data)
+    }
+  }
 
-//   if ! tv1 && ! tv2 {
-//     errorPage(w, "You don't have the read permission for this document structure.")
-//     return
-//   }
+  if r.FormValue("created_by") != "" {
+    whereFragmentParts = append(whereFragmentParts, "created_by = " + html.EscapeString(r.FormValue("created_by")))
+  }
+  if r.FormValue("creation-year") != "" {
+    whereFragmentParts = append(whereFragmentParts, "created_year = " + html.EscapeString(r.FormValue("creation-year")))
+  }
+  if r.FormValue("creation-month") != "" {
+    whereFragmentParts = append(whereFragmentParts, "created_month = " + html.EscapeString(r.FormValue("creation-month")))
+  }
 
-//   endSqlStmt, err := parseSearchVariables(r)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+  return whereFragmentParts, nil
+}
 
-//   if len(endSqlStmt) == 0 {
-//     errorPage(w, "Your query is empty.")
-//     return
-//   }
 
-//   tblName, err := tableName(ds)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+func searchResults(w http.ResponseWriter, r *http.Request) {
+  userIdInt64, err := GetCurrentUser(r)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
 
-//   if tv2 {
-//     endSqlStmt = append(endSqlStmt, fmt.Sprintf("created_by = %d", userIdInt64))
-//   }
+  vars := mux.Vars(r)
+  ds := vars["document-structure"]
 
-//   readSqlStmt := fmt.Sprintf("select * from `%s` where ", tblName) + strings.Join(endSqlStmt, " and ")
-//   totalSqlStmt := fmt.Sprintf("select count(*) from `%s` where ", tblName) + strings.Join(endSqlStmt, " and ")
+  detv, err := docExists(ds)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  if detv == false {
+    errorPage(w, fmt.Sprintf("The document structure %s does not exists.", ds))
+    return
+  }
 
-//   innerListDocuments(w, r, readSqlStmt, totalSqlStmt, "search-list")
-//   return
-// }
+  tv1, err := DoesCurrentUserHavePerm(r, ds, "read")
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  tv2, err := DoesCurrentUserHavePerm(r, ds, "read-only-created")
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+
+  if ! tv1 && ! tv2 {
+    errorPage(w, "You don't have the read permission for this document structure.")
+    return
+  }
+
+  whereFragmentParts, err := parseSearchVariables(r)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+
+  if len(whereFragmentParts) == 0 {
+    errorPage(w, "Your query is empty.")
+    return
+  }
+
+  tblName, err := tableName(ds)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+
+  if tv2 {
+    whereFragmentParts = append(whereFragmentParts, fmt.Sprintf("created_by = %d", userIdInt64))
+  }
+
+  countStmt := fmt.Sprintf(`
+    table: %s
+    where:
+      %s
+    `, tblName, strings.Join(whereFragmentParts, "\nand "))
+
+  whereFragment := strings.Join(whereFragmentParts, "\nand ")
+  innerListDocuments(w, r, tblName, whereFragment, countStmt, "search-list")
+  return
+}
