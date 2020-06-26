@@ -337,7 +337,7 @@ func AddFORMS814Handlers(r *mux.Router) {
   r.HandleFunc("/edit-document-structure-permissions/{document-structure}/", editDocumentStructurePermissions)
   r.HandleFunc("/light-edit-document-structure/{document-structure}/", lightEditDocumentStructure)
   r.HandleFunc("/update-document-structure-name/{document-structure}/", updateDocumentStructureName)
-  // r.HandleFunc("/update-help-text/{document-structure}/", updateHelpText)
+  r.HandleFunc("/update-help-text/{document-structure}/", updateHelpText)
   // r.HandleFunc("/update-field-labels/{document-structure}/", updateFieldLabels)
   // r.HandleFunc("/delete-fields/{document-structure}/", deleteFields)
   // r.HandleFunc("/change-fields-order/{document-structure}/", changeFieldsOrder)

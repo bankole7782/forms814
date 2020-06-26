@@ -144,40 +144,45 @@ func updateDocumentStructureName(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// func updateHelpText(w http.ResponseWriter, r *http.Request) {
-//   truthValue, err := isUserAdmin(r)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
-//   if ! truthValue {
-//     errorPage(w, "You are not an admin here. You don't have permissions to view this page.")
-//     return
-//   }
+func updateHelpText(w http.ResponseWriter, r *http.Request) {
+  truthValue, err := isUserAdmin(r)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  if ! truthValue {
+    errorPage(w, "You are not an admin here. You don't have permissions to view this page.")
+    return
+  }
 
-//   vars := mux.Vars(r)
-//   ds := vars["document-structure"]
+  vars := mux.Vars(r)
+  ds := vars["document-structure"]
 
-//   detv, err := docExists(ds)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
-//   if detv == false {
-//     errorPage(w, fmt.Sprintf("The document structure %s does not exists.", ds))
-//     return
-//   }
+  detv, err := docExists(ds)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  if detv == false {
+    errorPage(w, fmt.Sprintf("The document structure %s does not exists.", ds))
+    return
+  }
 
-//   sqlStmt := "update `qf_document_structures` set help_text = ? where fullname = ?"
-//   _, err = SQLDB.Exec(sqlStmt, r.FormValue("updated-help-text"), ds)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+  err = FRCL.UpdateRowsStr(fmt.Sprintf(`
+    table: f8_document_structures
+    where:
+      fullname = '%s'
+    `, ds), 
+    map[string]string { "help_text": r.FormValue("updated-help-text")},
+  )
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
 
-//   redirectURL := fmt.Sprintf("/view-document-structure/%s/", ds)
-//   http.Redirect(w, r, redirectURL, 307)
-// }
+  redirectURL := fmt.Sprintf("/view-document-structure/%s/", ds)
+  http.Redirect(w, r, redirectURL, 307)
+}
 
 
 // func updateFieldLabels(w http.ResponseWriter, r *http.Request) {
