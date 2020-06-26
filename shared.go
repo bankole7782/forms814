@@ -180,7 +180,7 @@ func untestedRandomString(length int) string {
 
 func newTableName() (string, error) {
   for {
-    newName := "qftbl_" + untestedRandomString(3)
+    newName := "f8tbl_" + untestedRandomString(3)
     count, err := FRCL.CountRows(fmt.Sprintf(`
     	table: f8_document_structures
     	where:
@@ -345,84 +345,6 @@ func getRolePermissions(documentStructure string) ([]RolePermissions, error) {
     rps = append(rps, RolePermissions{row["roleid.role"].(string), row["permissions"].(string)})
   }
   return rps, nil
-}
-
-
-func getApprovers(documentStructure string) ([]string, error) {
-  approversList := make([]string, 0)
-  row, err := FRCL.SearchForOne(fmt.Sprintf(`
-  	table: f8_document_structures
-  	where:
-  		fullname = '%s'
-  	`, documentStructure))
-  if err != nil {
-  	return approversList, err
-  }
-
- 	var approversStr string
- 	if as, ok := (*row)["approval_steps"]; ok {
- 		approversStr = as.(string)
- 		return strings.Split(approversStr, ",,,"), nil
- 	} else {
- 		return approversList, nil
- 	}
-
-}
-
-
-func getApprovalTable(documentStructure, role string) (string, error) {
-  dsid, err := getDocumentStructureID(documentStructure)
-  if err != nil {
-    return "", err
-  }
-  roleid, err := getRoleId(role)
-  if err != nil {
-    return "", err
-  }
-
-  row, err := FRCL.SearchForOne(fmt.Sprintf(`
-  	table: f8_approvals_tables
-  	where:
-  		dsid = %d
-  		and roleid = %d
-  	`, dsid, roleid))
-  if err != nil {
-  	return "", err
-  }
-
-  return (*row)["tbl_name"].(string), nil
-}
-
-
-func isApprovalFrameworkInstalled(documentStructure string) (bool, error) {
-  approvers, err := getApprovers(documentStructure)
-  if err != nil {
-    return false, err
-  }
-
-  if len(approvers) == 0 {
-    return false, nil
-  } else {
-    return true, nil
-  }
-}
-
-
-func newApprovalTableName() (string, error) {
-  for {
-    newName := "qfatbl_" + untestedRandomString(4)
-    count, err := FRCL.CountRows(fmt.Sprintf(`
-    	table: f8_approvals_tables
-    	where:
-    		tbl_name = %s
-    	`, newName))
-    if err != nil {
-      return "", err
-    }
-    if count == 0 {
-      return newName, nil
-    }
-  }
 }
 
 

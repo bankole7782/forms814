@@ -1,0 +1,217 @@
+{{define "title"}}Light Edit Document Structure of {{.DocumentStructure}}{{end}}
+
+
+{{define "styles"}}
+<style>
+.error-box {
+  display: none;
+  color: red;
+}
+body {
+  margin-bottom: 50px;
+}
+.field-label {
+  width: 300px;
+}
+thead {
+  font-weight: bold;
+}
+tbody {
+  vertical-align: top;
+}
+.other-options {
+  width: 300px;
+}
+#container {
+  width: fit-content;
+  margin: 0 auto;
+}
+</style>
+{{end}}
+
+
+{{define "main"}}
+<div id="container">
+  <h1>Light Edit Document Structure of {{.DocumentStructure}}</h1>
+  <h2>Help</h2>
+  <p>
+    After any changes made here, try to send a mail to the users of this document structure notifying them of the change.<br>
+    This would help especially when you add columns and need new data from them.
+  </p>
+
+  <h2>Change Name Form</h2>
+  {{if .IsChildTable}}
+    Child table renaming is not supported.
+  {{else}}
+    <p id="change-name-error" class="error-box"></p>
+    <form id="change-name-form" method='post' action='/update-document-structure-name/{{.DocumentStructure}}/'>
+      <div>
+        <label>New Name</label>
+        <input type="text" value="{{.DocumentStructure}}" name="new-name" />
+      </div>
+      <div>
+        <input type="submit" value="Update" id="change-name-btn" />
+      </div>
+    </form>
+  {{end}}
+
+  <h2>Update Help Text</h2>
+  <p id="help-text-error" class="error-box"></p>
+  <form id="update-help-text-form" method='post' action='/update-help-text/{{.DocumentStructure}}/'>
+    <div>
+      <label>Help Text</label><br>
+      <textarea name="updated-help-text">{{.HelpText}}</textarea>
+    </div>
+    <div>
+      <input type="submit" value="Update" />
+    </div>
+  </form>
+
+
+  <h2>Change Field Label(s)</h2>
+  <p id="change-field-labels-error" class="error-box"></p>
+  <form id="change-field-labels-form" method="post" action='/update-field-labels/{{.DocumentStructure}}/'>
+    <table id="new-field-labels-tbl">
+      <thead>
+        <tr>
+          <td>No</td>
+          <td>Old Label Name</td>
+          <td>New Label Name</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>
+            <select name='old-field-label-1' class='old-field-label'>
+              {{range $.OldLabels}}
+                <option>{{.}}</option>
+              {{end}}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="new-field-label-1" class="new-field-label" required />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <div>
+      <button type="button" id='add-field-btn'>Add Field</button>
+    </div>
+    <br>
+    <div>
+      <input type="submit" value="Update" id="update-field-labels-btn" />
+    </div>
+  </form>
+
+  <h2>Change Fields Order</h2>
+  <p id="change-fields-order-error" class="error-box"></p>
+  <form id="change-fields-order-form" action="/change-fields-order/{{.DocumentStructure}}/" method="post">
+    <table>
+      <thead>
+        <tr>
+          <td>No</td>
+          <td>Field Label </td>
+          <td>Buttons</td>
+        </tr>
+      </thead>
+      <tbody>
+        {{range $index, $element :=  $.OldLabels}}
+          <tr>
+            <td>{{call $.Add $index 1}}</td>
+            <td>{{$element}}</td>
+            <td>
+              <button type="button" class="move-up">Move Up</button>
+              <button type="button" class="move-down">Move Down</button>
+            </td>
+          </tr>
+        {{end}}
+      </tbody>
+    </table>
+    <br>
+    <div>
+      <input type="submit" value="Change Field Order" />
+    </div>
+  </form>
+
+
+</div>
+{{end}}
+
+{{define "scripts"}}
+<script>
+var docNames = "{{.DocumentStructures}}";
+var numberOfFields = {{.NumberofFields}};
+var oldLabels = "{{.OldLabelsStr}}";
+var childTableDocumentStructures = "{{.ChildTableDocumentStructures}}";
+var oldFieldNames = [ {{range $.DocDatas}} "{{.Name}}", {{end}} ];
+var isChildTable = {{.IsChildTable}};
+
+function recountChangeFieldTable() {
+  $('#change-fields-order-form tbody tr').each(function(i, el) {
+    var newNo = i + 1;
+    $('td:first', el).text(newNo.toString());
+  });
+}
+
+$(document).ready(function() {
+  docNamesList = docNames.split(',,,');
+
+  $('#change-name-btn').click(function(e) {
+    e.preventDefault()
+
+    if ( docNamesList.indexOf( $('input[name=new-name]').val() ) != -1 ) {
+      $('#change-name-error').text('The document name is already taken.');
+      $('#change-name-error').show();
+      $('input[name=new-name]').css('border', '1px solid red');
+      return;
+    } else {
+      $('#change-name-error').hide();
+    }
+
+    $('#change-name-form').submit();
+  });
+
+  $('.move-up').click(function(e) {
+    e.preventDefault();
+
+    var parentTr = $(e.target).parents('tr');
+    var no = $('td:first ', parentTr).text()
+    if (no == '1') {
+      return
+    }
+    parentTr.insertBefore(parentTr.prev("tr"));
+    // recount the numbers
+    recountChangeFieldTable();
+  });
+
+  $('.move-down').click(function(e) {
+    e.preventDefault();
+
+    var parentTr = $(e.target).parents('tr');
+    var total = $('#change-fields-order-form tbody tr').length;
+    var no = $('td:first ', parentTr).text();
+    if (no == total) {
+      return
+    }
+    parentTr.insertAfter(parentTr.next("tr"));
+    recountChangeFieldTable();
+  });
+
+  $('#change-fields-order-form input[type=submit]').click(function(e) {
+    e.preventDefault();
+
+
+    $('#change-fields-order-form tbody tr').each(function(i, el) {
+      var html = "<input type='hidden' name='el-" + $('td:first', el).text() + "' value='";
+      html += $('td:nth-child(2)', el).text() + "' />"
+      $('#change-fields-order-form').append(html);
+    });
+
+    $('#change-fields-order-form').submit();
+  });
+
+});
+</script>
+{{end}}

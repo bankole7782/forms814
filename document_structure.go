@@ -289,38 +289,6 @@ func deleteDocumentStructure(w http.ResponseWriter, r *http.Request) {
     }
   }
 
-  approvers, err := getApprovers(ds)
-  if err != nil {
-    errorPage(w, err.Error())
-    return
-  }
-
-  for _, step := range approvers {
-    atn, err := getApprovalTable(ds, step)
-    if err != nil {
-      errorPage(w, "An error occurred getting approval table name.")
-      return
-    }
-
-    err = FRCL.DeleteTable(atn)
-    if err != nil {
-      errorPage(w, err.Error())
-      return
-    }
-
-    err = FRCL.DeleteRows(fmt.Sprintf(`
-      table: f8_approvals_tables expand
-      where:
-        dsid.fullname = '%s'
-        and roleid.role = '%s'
-      `, ds, step))
-    if err != nil {
-      errorPage(w, "Error occurred removing record of approval table.")
-      return
-    }
-
-  }
-
   tblName, err := tableName(ds)
   if err != nil {
     errorPage(w, err.Error())
