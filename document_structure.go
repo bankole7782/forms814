@@ -134,7 +134,7 @@ func newDocumentStructure(w http.ResponseWriter, r *http.Request) {
       }
       stmt += "\n" + qff.name + " "
       if qff.type_ == "Check" {
-        stmt += "char(1) default 'f'"
+        stmt += "bool"
       } else if qff.type_ == "Date" {
         stmt += "date"
       } else if qff.type_ == "Date and Time" {

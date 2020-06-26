@@ -341,7 +341,7 @@ func AddFORMS814Handlers(r *mux.Router) {
   r.HandleFunc("/update-field-labels/{document-structure}/", updateFieldLabels)
   r.HandleFunc("/change-fields-order/{document-structure}/", changeFieldsOrder)
   r.HandleFunc("/new-ds-from-template/{document-structure}/", newDSFromTemplate)
-
+  r.HandleFunc("/full-edit-document-structure/{document-structure}/", fullEditDocumentStructure)
 
   // publicity document structure links
   r.HandleFunc("/make-public/{document-structure}/", makePublic)
