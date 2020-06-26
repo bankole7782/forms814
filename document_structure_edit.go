@@ -246,44 +246,51 @@ func updateFieldLabels(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// func changeFieldsOrder(w http.ResponseWriter, r *http.Request) {
-//   truthValue, err := isUserAdmin(r)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
-//   if ! truthValue {
-//     errorPage(w, "You are not an admin here. You don't have permissions to view this page.")
-//     return
-//   }
+func changeFieldsOrder(w http.ResponseWriter, r *http.Request) {
+  truthValue, err := isUserAdmin(r)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  if ! truthValue {
+    errorPage(w, "You are not an admin here. You don't have permissions to view this page.")
+    return
+  }
 
-//   vars := mux.Vars(r)
-//   ds := vars["document-structure"]
+  vars := mux.Vars(r)
+  ds := vars["document-structure"]
 
-//   r.ParseForm()
-//   newFieldsOrder := make([]string, 0)
-//   for i := 1; i < 100; i ++ {
-//     if r.FormValue("el-" + strconv.Itoa(i)) == "" {
-//       break
-//     }
-//     newFieldsOrder = append(newFieldsOrder, r.FormValue("el-" + strconv.Itoa(i)) )
-//   }
+  r.ParseForm()
+  newFieldsOrder := make([]string, 0)
+  for i := 1; i < 100; i ++ {
+    if r.FormValue("el-" + strconv.Itoa(i)) == "" {
+      break
+    }
+    newFieldsOrder = append(newFieldsOrder, r.FormValue("el-" + strconv.Itoa(i)) )
+  }
 
-//   dsid, err := getDocumentStructureID(ds)
-//   if err != nil {
-//     errorPage(w, err.Error())
-//     return
-//   }
+  dsid, err := getDocumentStructureID(ds)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
 
-//   for j, label := range newFieldsOrder {
-//     sqlStmt := "update `qf_fields` set view_order = ? where dsid = ? and label = ?"
-//     _, err = SQLDB.Exec(sqlStmt, j+1, dsid, label)
-//     if err != nil {
-//       errorPage(w, err.Error())
-//       return
-//     }
-//   }
+  for j, label := range newFieldsOrder {
+    err = FRCL.UpdateRowsAny(fmt.Sprintf(`
+      table: f8_fields
+      where:
+        dsid = %d
+        and label = '%s'
+      `, dsid, label), 
+      map[string]interface{} { "view_order": j + 1},
+    )
 
-//   redirectURL := fmt.Sprintf("/view-document-structure/%s/", ds)
-//   http.Redirect(w, r, redirectURL, 307)
-// }
+    if err != nil {
+      errorPage(w, err.Error())
+      return
+    }
+  }
+
+  redirectURL := fmt.Sprintf("/view-document-structure/%s/", ds)
+  http.Redirect(w, r, redirectURL, 307)
+}
