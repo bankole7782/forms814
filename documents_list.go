@@ -72,6 +72,8 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
   }
 
   colNames := make([]ColLabel, 0)
+  colNames = append(colNames, ColLabel{"needs_update", "Needs Update"})
+
   dsid, err := getDocumentStructureID(ds)
   if err != nil {
     errorPage(w, err.Error())
@@ -177,22 +179,38 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
     return
   }
 
+  currentVersionNum, err := FRCL.GetCurrentTableVersionNum(tblName)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+
   for _, rowMapItem := range *rows {
     colAndDatas := make([]ColAndData, 0)
     for _, colLabel := range colNames {
-      var data string
-      switch dInType := rowMapItem[colLabel.Col].(type) {
-      case int64, float64:
-        data = fmt.Sprintf("%d", dInType)
-      case time.Time:
-        data = flaarum.RightDateTimeFormat(dInType)
-      case string:
-        data = dInType
-      case bool:
-        data = BoolToStr(dInType)
-      }
+      if colLabel.Col == "needs_update" {
+        var data string
+        if currentVersionNum == rowMapItem["_version"].(int64) {
+          data = "no"
+        } else {
+          data = "yes"
+        }
+        colAndDatas = append(colAndDatas, ColAndData{colLabel.Label, data})
+      } else {
+        var data string
+        switch dInType := rowMapItem[colLabel.Col].(type) {
+        case int64, float64:
+          data = fmt.Sprintf("%d", dInType)
+        case time.Time:
+          data = flaarum.RightDateTimeFormat(dInType)
+        case string:
+          data = dInType
+        case bool:
+          data = BoolToStr(dInType)
+        }
 
-      colAndDatas = append(colAndDatas, ColAndData{colLabel.Label, data})
+        colAndDatas = append(colAndDatas, ColAndData{colLabel.Label, data})
+      }
 
     }
 
