@@ -407,7 +407,7 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
     var data string
     switch dInType := v.(type) {
     case int64, float64:
-      data = fmt.Sprintf("%d", dInType)
+      data = fmt.Sprintf("%v", dInType)
     case time.Time:
       data = flaarum.RightDateTimeFormat(dInType)
     case string:
@@ -462,7 +462,7 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
               var data string
               switch dInType := v.(type) {
               case int64, float64:
-                data = fmt.Sprintf("%d", dInType)
+                data = fmt.Sprintf("%v", dInType)
               case time.Time:
                 data = flaarum.RightDateTimeFormat(dInType)
               case string:

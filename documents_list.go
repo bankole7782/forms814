@@ -200,7 +200,7 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
         var data string
         switch dInType := rowMapItem[colLabel.Col].(type) {
         case int64, float64:
-          data = fmt.Sprintf("%d", dInType)
+          data = fmt.Sprintf("%v", dInType)
         case time.Time:
           data = flaarum.RightDateTimeFormat(dInType)
         case string:
