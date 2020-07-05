@@ -90,7 +90,7 @@ func innerDeleteDocument(r *http.Request, docid string, deleteFile bool) error {
     var data string
     switch dInType := (*arow)[colName].(type) {
     case int64, float64:
-      data = fmt.Sprintf("%d", dInType)
+      data = fmt.Sprintf("%v", dInType)
     case time.Time:
       data = flaarum.RightDateTimeFormat(dInType)
     case string:
