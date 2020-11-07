@@ -109,7 +109,7 @@ To add a user as inspector add his/her id to `forms814.Inspectors`
 
 ### Theming Your Project
 
-The sample project has no design. To make it beautiful make a template from this template :`forms814files/bad-base.html`
+The sample project has no design. To make it beautiful make a template from this template :`f8_files/bad-base.html`
 . Save it to your project and then point your version to `forms814.BaseTemplate`.
 
 Also if you want to add dynamic contents to any `forms814` page, please use JavaScript.
