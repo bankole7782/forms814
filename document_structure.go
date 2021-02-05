@@ -117,7 +117,6 @@ func newDocumentStructure(w http.ResponseWriter, r *http.Request) {
         created datetime required
         modified datetime required
         created_by int required
-        fully_approved bool
       `, tblName)
     } else {
       stmt = fmt.Sprintf(`
