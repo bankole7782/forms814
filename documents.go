@@ -66,7 +66,7 @@ func createDocument(w http.ResponseWriter, r *http.Request) {
   if err != nil {
     errorPage(w, err.Error())
     return
-  }    
+  }
   var htStr string
   if ht, ok := (*arow)["help_text"]; ok {
     htStr = strings.Replace(ht.(string), "\n", "<br>", -1)
@@ -175,6 +175,15 @@ func createDocument(w http.ResponseWriter, r *http.Request) {
                 data = "f"
               }
               toInsertCT[ddCT.Name] = data
+            case "Datetime":
+              if tempData != "" {
+                tzname, err := getUserTimeZoneSuffix(userIdInt64)
+                if err != nil {
+                  errorPage(w, err.Error())
+                  return
+                }
+                toInsertCT[ddCT.Name] = html.EscapeString(tempData) + " " + tzname
+              }
             default:
               if tempData != "" {
                 toInsertCT[ddCT.Name] = html.EscapeString(tempData)
@@ -228,6 +237,16 @@ func createDocument(w http.ResponseWriter, r *http.Request) {
           break
         }
         toInsert[dd.Name] = newFileName
+      case "Datetime":
+        if r.FormValue(dd.Name) != "" {
+          tzname, err := getUserTimeZoneSuffix(userIdInt64)
+          if err != nil {
+            errorPage(w, err.Error())
+            return
+          }
+          toInsert[dd.Name] = r.FormValue(dd.Name) + " " + tzname
+        }
+
       default:
         if r.FormValue(dd.Name) != "" {
           toInsert[dd.Name] = r.FormValue(dd.Name)
@@ -409,7 +428,7 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
     case int64, float64:
       data = fmt.Sprintf("%v", dInType)
     case time.Time:
-      data = flaarum.RightDateTimeFormat(dInType)
+      data = dInType.Format("2006-01-02T15:04")
     case string:
       data = dInType
     case bool:
@@ -464,7 +483,7 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
               case int64, float64:
                 data = fmt.Sprintf("%v", dInType)
               case time.Time:
-                data = flaarum.RightDateTimeFormat(dInType)
+                data = dInType.Format("2006-01-02T15:04")
               case string:
                 data = dInType
               case bool:
@@ -640,6 +659,13 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
                 data = "f"
               }
               toInsertCT[ddCT.Name] = data
+            case "Datetime":
+              tzname, err := getUserTimeZoneSuffix(userIdInt64)
+              if err != nil {
+                errorPage(w, err.Error())
+                return
+              }
+              toInsertCT[ddCT.Name] = tempData + " " + tzname
             default:
               if tempData != "" {
                 toInsertCT[ddCT.Name] = html.EscapeString(tempData)
@@ -707,6 +733,13 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
             data = "f"
           }
           toUpdate[docAndStructure.DocData.Name] = data
+        case "Datetime":
+          tzname, err := getUserTimeZoneSuffix(userIdInt64)
+          if err != nil {
+            errorPage(w, err.Error())
+            return
+          }
+          toUpdate[docAndStructure.DocData.Name] = r.FormValue(docAndStructure.DocData.Name) + " " + tzname
         default:
           toUpdate[docAndStructure.DocData.Name] = html.EscapeString(r.FormValue(docAndStructure.DocData.Name))
         }

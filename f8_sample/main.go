@@ -18,7 +18,7 @@ func main() {
   cl := flaarum.NewClient(addr, keyStr, projName)
 	if err := cl.Ping(); err != nil {
     panic(err)
-  }  
+  }
 
   // FORMS814 setup. Very important
   forms814.FRCL = cl
@@ -44,11 +44,11 @@ func main() {
 
   // forms814.ExtraCodeMap[1] = qf.ExtraCode{CanCreateFn: testCreateFn}
 
-  forms814.BucketName = os.Getenv("FORMS814_GCLOUD_BUCKET")
+  forms814.BucketName = os.Getenv("F8_GCLOUD_BUCKET")
 
   // forms814.BaseTemplate = "basetemplate.html"
   r := mux.NewRouter()
-  forms814.AddFORMS814Handlers(r)
+  forms814.AddHandlers(r)
 
   http.ListenAndServe(":3001", r)
 }

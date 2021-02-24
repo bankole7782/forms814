@@ -7,8 +7,6 @@ import (
   "strconv"
   "os"
   "html/template"
-  // "html"
-  // "errors"
   "math/rand"
   "time"
   "runtime"
@@ -486,4 +484,26 @@ func GetCurrentUserRolesIds(r *http.Request) ([]string, error) {
     rids = append(rids, fmt.Sprintf("%d", row["roleid"].(int)))
   }
   return rids, nil
+}
+
+
+func getUserTimeZoneSuffix(userid int64) (string, error) {
+  fmt.Println(userid)
+  row, err := FRCL.SearchForOne(fmt.Sprintf(`
+    table: users
+    where:
+      id = %d
+    `, userid))
+  if err != nil {
+    return "", err
+  }
+
+  fmt.Println("found a row")
+
+  loc, err := time.LoadLocation((*row)["timezone"].(string))
+  if err != nil {
+    return "", err
+  }
+  tzname, _ := time.Now().In(loc).Zone()
+  return tzname, nil
 }

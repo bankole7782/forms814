@@ -320,7 +320,7 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
 }
 
 
-func AddFORMS814Handlers(r *mux.Router) {
+func AddHandlers(r *mux.Router) {
 
   // Please don't change the paths.
 
