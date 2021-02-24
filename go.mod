@@ -5,7 +5,7 @@ go 1.14
 require (
 	cloud.google.com/go v0.76.0 // indirect
 	cloud.google.com/go/storage v1.13.0
-	github.com/bankole7782/flaarum v1.6.13
+	github.com/bankole7782/flaarum v1.6.14
 	github.com/bankole7782/zazabul v1.1.0 // indirect
 	github.com/gorilla/mux v1.8.0
 	go.opencensus.io v0.22.6 // indirect

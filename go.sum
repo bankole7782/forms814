@@ -56,6 +56,8 @@ github.com/bankole7782/flaarum v1.6.12 h1:naBZlKoFYurIkRulSmLXM6dV8SeNgs/o/7y6x4
 github.com/bankole7782/flaarum v1.6.12/go.mod h1:x6wd1yyrm9cUQHng2sJmDNqHDreW3soCNyQQn0E/3Ck=
 github.com/bankole7782/flaarum v1.6.13 h1:R3ILP4jf5oaGzpaLF51ozWE/EOv3pHlrU4xDXoJsq14=
 github.com/bankole7782/flaarum v1.6.13/go.mod h1:x6wd1yyrm9cUQHng2sJmDNqHDreW3soCNyQQn0E/3Ck=
+github.com/bankole7782/flaarum v1.6.14 h1:ePDN8cJyfQEafh1hWcMqXWOd+v5SD6112S1vSg3oFVk=
+github.com/bankole7782/flaarum v1.6.14/go.mod h1:x6wd1yyrm9cUQHng2sJmDNqHDreW3soCNyQQn0E/3Ck=
 github.com/bankole7782/mof v0.0.0-20200317202416-46aa3f7786db/go.mod h1:jh9v/sFA9YDydJIpADTYnKFjshE3a2ywtPfPkxocqDQ=
 github.com/bankole7782/mof v1.0.0/go.mod h1:jh9v/sFA9YDydJIpADTYnKFjshE3a2ywtPfPkxocqDQ=
 github.com/bankole7782/zazabul v1.0.0 h1:KXh0TplI3d/eVFJ1bEb9HM5p0IfMlTVDbaxH4e9lA/U=
