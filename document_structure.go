@@ -136,7 +136,7 @@ func newDocumentStructure(w http.ResponseWriter, r *http.Request) {
         stmt += "bool"
       } else if qff.type_ == "Date" {
         stmt += "date"
-      } else if qff.type_ == "Date and Time" {
+      } else if qff.type_ == "Datetime" {
         stmt += "datetime"
       } else if qff.type_ == "Float" {
         stmt += "float"
@@ -333,12 +333,12 @@ func deleteDocumentStructure(w http.ResponseWriter, r *http.Request) {
         }
 
         for _, fp := range filepaths {
-          _, err = FRCL.InsertRowAny("f8_files_for_delete", 
+          _, err = FRCL.InsertRowAny("f8_files_for_delete",
             map[string]interface{} {"created_by": useridInt64, "filepath": fp})
           if err != nil {
             panic(err)
           }
-        }        
+        }
       }
     }
 
@@ -617,7 +617,7 @@ func newDSFromTemplate(w http.ResponseWriter, r *http.Request) {
     return strings.Join(x, "\n")
   }
 
-  ctx := Context{docDatas, ds, add, childTableBool, helpTextStr, ffunc, strings.Join(ctdsList, ",,,"), 
+  ctx := Context{docDatas, ds, add, childTableBool, helpTextStr, ffunc, strings.Join(ctdsList, ",,,"),
     strings.Join(dsList, ",,,")}
   tmpl := template.Must(template.ParseFiles(getBaseTemplate(), "f8_files/new-ds-from-template.html"))
   tmpl.Execute(w, ctx)

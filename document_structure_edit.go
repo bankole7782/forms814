@@ -131,7 +131,7 @@ func updateDocumentStructureName(w http.ResponseWriter, r *http.Request) {
     table: f8_document_structures
     where:
       fullname = '%s'
-    `, ds), 
+    `, ds),
     map[string]string { "fullname": r.FormValue("new-name")},
   )
   if err != nil {
@@ -172,7 +172,7 @@ func updateHelpText(w http.ResponseWriter, r *http.Request) {
     table: f8_document_structures
     where:
       fullname = '%s'
-    `, ds), 
+    `, ds),
     map[string]string { "help_text": r.FormValue("updated-help-text")},
   )
   if err != nil {
@@ -232,7 +232,7 @@ func updateFieldLabels(w http.ResponseWriter, r *http.Request) {
       where:
         dsid = %d
         and label = '%s'
-      `, dsid, old), 
+      `, dsid, old),
       map[string]string { "label": new},
     )
     if err != nil {
@@ -281,7 +281,7 @@ func changeFieldsOrder(w http.ResponseWriter, r *http.Request) {
       where:
         dsid = %d
         and label = '%s'
-      `, dsid, label), 
+      `, dsid, label),
       map[string]interface{} { "view_order": j + 1},
     )
 
@@ -373,10 +373,10 @@ func fullEditDocumentStructure(w http.ResponseWriter, r *http.Request) {
       return strings.Join(x, "\n")
     }
 
-    ctx := Context{docDatas, ds, add, childTableBool, helpTextStr, ffunc, strings.Join(ctdsList, ",,,"), 
+    ctx := Context{docDatas, ds, add, childTableBool, helpTextStr, ffunc, strings.Join(ctdsList, ",,,"),
       strings.Join(dsList, ",,,")}
     tmpl := template.Must(template.ParseFiles(getBaseTemplate(), "f8_files/full-edit-document-structures.html"))
-    tmpl.Execute(w, ctx)    
+    tmpl.Execute(w, ctx)
 
   } else {
 
@@ -467,7 +467,7 @@ func fullEditDocumentStructure(w http.ResponseWriter, r *http.Request) {
         stmt += "bool"
       } else if qff.type_ == "Date" {
         stmt += "date"
-      } else if qff.type_ == "Date and Time" {
+      } else if qff.type_ == "Datetime" {
         stmt += "datetime"
       } else if qff.type_ == "Float" {
         stmt += "float"

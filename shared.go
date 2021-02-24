@@ -29,11 +29,11 @@ func errorPage(w http.ResponseWriter, msg string) {
     Message template.HTML
     SourceFn string
     SourceLine int
-    QF_DEVELOPER bool
+    PANDOLEE_DEVELOPER bool
   }
 
   var ctx Context
-  if os.Getenv("F8_DEVELOPER") == "true" {
+  if os.Getenv("PANDOLEE_DEVELOPER") == "true" {
     msg = strings.ReplaceAll(msg, "\n", "<br>")
     msg = strings.ReplaceAll(msg, "\t", "&nbsp;&nbsp;&nbsp;")
     ctx = Context{template.HTML(msg), fn, line, true}
@@ -143,7 +143,7 @@ func GetDocumentStructureList(situation string) ([]string, error) {
   } else if situation == "all" {
 	  rows, err = FRCL.Search(`
 	  	table: f8_document_structures
-			fields: fullname  	
+			fields: fullname
 	  	`)
   } else if situation == "not-child-tables" {
   	rows, err = FRCL.Search(`
@@ -248,7 +248,7 @@ func getDocumentStructureID(documentStructure string) (int64, error) {
 	row, err := FRCL.SearchForOne(fmt.Sprintf(`
 		table: f8_document_structures
 		where:
-			fullname = '%s'			
+			fullname = '%s'
 		`, documentStructure))
 	if err != nil {
 		return 0, err
