@@ -516,8 +516,22 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
     }
   }
 
-  created := flaarum.RightDateTimeFormat((*arow)["created"].(time.Time))
-  modified := flaarum.RightDateTimeFormat((*arow)["modified"].(time.Time))
+  rawCreated := (*arow)["created"].(time.Time)
+  createdCorrected, err := timeInUserTimeZone(rawCreated, userIdInt64)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  created := flaarum.RightDateTimeFormat(createdCorrected)
+
+  rawModified := (*arow)["modified"].(time.Time)
+  modifiedCorrected, err := timeInUserTimeZone(rawModified, userIdInt64)
+  if err != nil {
+    errorPage(w, err.Error())
+    return
+  }
+  modified := flaarum.RightDateTimeFormat(modifiedCorrected)
+
   firstname := (*arow)["created_by.firstname"].(string)
   surname := (*arow)["created_by.surname"].(string)
   created_by := (*arow)["created_by"].(int64)
