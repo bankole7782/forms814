@@ -69,10 +69,11 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
   type ColLabel struct {
     Col string
     Label string
+    Type string
   }
 
   colNames := make([]ColLabel, 0)
-  colNames = append(colNames, ColLabel{"needs_update", "Needs Update"})
+  colNames = append(colNames, ColLabel{"needs_update", "Needs Update", "string"})
 
   dsid, err := getDocumentStructureID(ds)
   if err != nil {
@@ -95,10 +96,11 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
   for _, row := range *frows {
     colName := row["name"].(string)
     label := row["label"].(string)
-    colNames = append(colNames, ColLabel{colName, label})
+    type_ := row["type"].(string)
+    colNames = append(colNames, ColLabel{colName, label, type_})
   }
 
-  colNames = append(colNames, ColLabel{"created", "Creation DateTime"}, ColLabel{"created_by", "Created By"})
+  colNames = append(colNames, ColLabel{"created", "Creation DateTime", "string"}, ColLabel{"created_by", "Created By", "string"})
 
   var itemsPerPage int64 = 50
   startIndex := (pageI - 1) * itemsPerPage
@@ -202,7 +204,11 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
         case int64, float64:
           data = fmt.Sprintf("%v", dInType)
         case time.Time:
-          data = flaarum.RightDateTimeFormat(dInType)
+          if colLabel.Type == "Date" {
+            data = dInType.Format("2006-01-02")
+          } else {
+            data = flaarum.RightDateTimeFormat(dInType)            
+          }
         case string:
           data = dInType
         case bool:
@@ -339,7 +345,7 @@ func listDocuments(w http.ResponseWriter, r *http.Request) {
   if tv1 {
     countStmt = fmt.Sprintf(`
       table: %s
-      `, tblName)    
+      `, tblName)
   } else {
     countStmt = fmt.Sprintf(`
       table: %s
