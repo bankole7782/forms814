@@ -441,6 +441,9 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
   for _, docData := range docDatas {
     if docData.Type == "Section Break" {
       docAndStructureSlice = append(docAndStructureSlice, docAndStructure{docData, ""})
+    } else if docData.Type == "Date" {
+      data := (*arow)[docData.Name].(time.Time).Format("2006-01-02")
+      docAndStructureSlice = append(docAndStructureSlice, docAndStructure{docData, data})
     } else {
       data := rowMap[ docData.Name ]
 

@@ -488,7 +488,6 @@ func GetCurrentUserRolesIds(r *http.Request) ([]string, error) {
 
 
 func getUserTimeZoneSuffix(userid int64) (string, error) {
-  fmt.Println(userid)
   row, err := FRCL.SearchForOne(fmt.Sprintf(`
     table: users
     where:
@@ -497,8 +496,6 @@ func getUserTimeZoneSuffix(userid int64) (string, error) {
   if err != nil {
     return "", err
   }
-
-  fmt.Println("found a row")
 
   loc, err := time.LoadLocation((*row)["timezone"].(string))
   if err != nil {
