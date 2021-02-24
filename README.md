@@ -43,6 +43,7 @@ Create a users table with the following properties:
 
 1. it must also have fields `firstname` and `surname` for easy recognition.
 2. it must also have field `email` for communications.
+3. it must also have field `timezone` for datetime data. Example value is 'Africa/Lagos'
 
 You must also provide a function that would get the currently logged in users. The function is given the request object
 to get the cookies for its purpose. Set the `forms814.GetCurrentUser` to this function. The function has the following
