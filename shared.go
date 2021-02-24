@@ -504,3 +504,24 @@ func getUserTimeZoneSuffix(userid int64) (string, error) {
   tzname, _ := time.Now().In(loc).Zone()
   return tzname, nil
 }
+
+
+func timeInUserTimeZone(t time.Time, userid int64) (time.Time, error) {
+  row, err := FRCL.SearchForOne(fmt.Sprintf(`
+    table: users
+    where:
+      id = %d
+    `, userid))
+  if err != nil {
+    return time.Time{}, err
+  }
+
+  loc, err := time.LoadLocation((*row)["timezone"].(string))
+  if err != nil {
+    return time.Time{}, err
+  }
+  if err == nil {
+    t = t.In(loc)
+  }
+  return t, nil
+}

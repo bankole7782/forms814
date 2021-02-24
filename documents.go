@@ -428,7 +428,12 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
     case int64, float64:
       data = fmt.Sprintf("%v", dInType)
     case time.Time:
-      data = dInType.Format("2006-01-02T15:04")
+      dInTypeCorrected, err := timeInUserTimeZone(dInType, userIdInt64)
+      if err != nil {
+        errorPage(w, err.Error())
+        return
+      }
+      data = dInTypeCorrected.Format("2006-01-02T15:04")
     case string:
       data = dInType
     case bool:
@@ -486,7 +491,12 @@ func updateDocument(w http.ResponseWriter, r *http.Request) {
               case int64, float64:
                 data = fmt.Sprintf("%v", dInType)
               case time.Time:
-                data = dInType.Format("2006-01-02T15:04")
+                dInTypeCorrected, err := timeInUserTimeZone(dInType, userIdInt64)
+                if err != nil {
+                  errorPage(w, err.Error())
+                  return
+                }
+                data = dInTypeCorrected.Format("2006-01-02T15:04")
               case string:
                 data = dInType
               case bool:

@@ -207,7 +207,12 @@ func innerListDocuments(w http.ResponseWriter, r *http.Request, tblName, whereFr
           if colLabel.Type == "Date" {
             data = dInType.Format("2006-01-02")
           } else {
-            data = flaarum.RightDateTimeFormat(dInType)            
+            dInTypeCorrected, err := timeInUserTimeZone(dInType, userIdInt64)
+            if err != nil {
+              errorPage(w, err.Error())
+              return
+            }
+            data = flaarum.RightDateTimeFormat(dInTypeCorrected)
           }
         case string:
           data = dInType
