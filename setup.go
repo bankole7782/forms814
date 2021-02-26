@@ -190,26 +190,6 @@ func forms814Setup(w http.ResponseWriter, r *http.Request) {
   }
 
   err = createOrUpdateTable(`
-  	table: f8_approvals_tables
-  	fields:
-  		dsid int required
-  		roleid int required
-  		tbl_name string required unique
-  	::
-  	foreign_keys:
-  		dsid f8_document_structures on_delete_delete
-  		roleid f8_roles on_delete_delete
-  	::
-  	unique_groups:
-  		dsid roleid
-  	::
-  	`)
-  if err != nil {
-    errorPage(w, err.Error())
-    return
-  }
-
-  err = createOrUpdateTable(`
   	table: f8_permissions
   	fields:
   		dsid int required
